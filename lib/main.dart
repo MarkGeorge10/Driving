@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Calender page.dart';
+import 'LessonsPage.dart';
 import 'Message/MessagesPage.dart';
 import 'Pupil.dart';
 import 'RegistrationForm/LoginPage.dart';
@@ -19,6 +21,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/Pupils': (context) => Pupils(),
         '/MessagePage': (context) => MessagePage(),
+        '/LessonsPage': (context) => LessonsPage(),
+        '/CalenderPage': (context) => CalenderPage(),
       },
     );
   }

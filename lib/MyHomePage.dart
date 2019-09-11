@@ -7,29 +7,45 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var dashboard = [
-    {
+    /*{
       "icon": Icons.check_box,
       "footer": "View All Booking",
+      "color": Colors.orange,
+
       "Stat": "17",
       "Stat_Comment": "All Bookings !"
-    },
+    },*/
     {
       "icon": Icons.calendar_today,
       "footer": "View Diary",
+      "navigation": '/CalenderPage',
+      "color": Colors.green,
       "Stat": "17",
       "Stat_Comment": "Today's Lessons!"
     },
     {
       "icon": Icons.markunread,
       "footer": "View All Messages",
+      "navigation": '/MessagePage',
+      "color": Colors.redAccent,
       "Stat": "17",
       "Stat_Comment": "Unread Messages!"
     },
     {
       "icon": Icons.person,
       "footer": "View All Pupils",
+      "navigation": '/Pupils',
+      "color": Colors.blue,
       "Stat": "17",
-      "Stat_Comment": "Pupils!"
+      "Stat_Comment": "Pupils !"
+    },
+    {
+      "icon": Icons.directions_car,
+      "footer": "View All Lessons ",
+      "navigation": '/LessonsPage',
+      "color": Colors.orange,
+      "Stat": "17",
+      "Stat_Comment": "Lessons !"
     }
   ];
 
@@ -43,63 +59,68 @@ class _MyHomePageState extends State<MyHomePage> {
         body: ListView.builder(
             itemCount: dashboard.length,
             itemBuilder: (context, index) {
-              return Card(
-                  elevation: 10.0,
-                  color: Colors.white,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height / 4,
-                    child: GridTile(
-                      child: Container(
-                        color: Colors.orange,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                child: Center(
-                                  child: Icon(
-                                    dashboard[index]['icon'],
-                                    color: Colors.white,
-                                    size: 80.0,
-                                  ),
-                                ),
-                              ),
-                              flex: 6,
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      child: Text(
-                                    "",
-                                    style: TextStyle(color: Colors.white),
-                                  )),
-                                  Container(
-                                    child: Text(
-                                      dashboard[index]['Stat_Comment'],
-                                      style: TextStyle(color: Colors.white),
+              return InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, dashboard[index]['navigation']);
+                },
+                child: Card(
+                    elevation: 10.0,
+                    color: Colors.white,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 4,
+                      child: GridTile(
+                        child: Container(
+                          color: dashboard[index]['color'],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  child: Center(
+                                    child: Icon(
+                                      dashboard[index]['icon'],
+                                      color: Colors.white,
+                                      size: 80.0,
                                     ),
                                   ),
-                                ],
+                                ),
+                                flex: 6,
                               ),
-                              flex: 6,
-                            )
-                          ],
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                        child: Text(
+                                      "",
+                                      style: TextStyle(color: Colors.white),
+                                    )),
+                                    Container(
+                                      child: Text(
+                                        dashboard[index]['Stat_Comment'],
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                flex: 6,
+                              )
+                            ],
+                          ),
+                        ),
+                        footer: Container(
+                          height: MediaQuery.of(context).size.height / 20,
+                          color: Colors.grey[400],
+                          child: Center(
+                              child: Text(
+                            dashboard[index]["footer"],
+                            style: TextStyle(color: Colors.white),
+                          )),
                         ),
                       ),
-                      footer: Container(
-                        height: MediaQuery.of(context).size.height / 20,
-                        color: Colors.grey[400],
-                        child: Center(
-                            child: Text(
-                          dashboard[index]["footer"],
-                          style: TextStyle(color: Colors.white),
-                        )),
-                      ),
-                    ),
-                  ));
+                    )),
+              );
             }));
   }
 
@@ -135,7 +156,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-          ExpansionTile(
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, '/LessonsPage');
+            },
+            child: ListTile(
+              title: Text("Lessons"),
+              leading: Icon(
+                Icons.directions_car,
+                color: Colors.orangeAccent,
+              ),
+            ),
+          ),
+
+          /* ExpansionTile(
             title: Text("Lessons"),
             leading: Icon(
               Icons.directions_car,
@@ -161,9 +195,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )
             ],
+          ),*/
+
+          InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, "/Pupils");
+            },
+            child: ListTile(
+              title: new Text("Pupils"),
+              leading: Icon(
+                Icons.account_box,
+                color: Colors.orangeAccent,
+              ),
+            ),
           ),
 
-          new ExpansionTile(
+          /*new ExpansionTile(
             title: new Text("Pupils"),
             leading: Icon(
               Icons.account_box,
@@ -192,11 +239,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )
             ],
-          ),
+          ),*/
 
           InkWell(
             onTap: () {
-              // logout();
+              Navigator.pushNamed(context, '/CalenderPage');
             },
             child: ListTile(
               title: Text("Dairy"),
@@ -209,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // logout();
             },
             child: ListTile(
-              title: Text("Settings"),
+              title: Text("Logout"),
               leading: Icon(Icons.settings, color: Colors.orangeAccent),
             ),
           ),

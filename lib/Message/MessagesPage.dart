@@ -22,7 +22,9 @@ class _MessagePageState extends State<MessagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("Message Page"),
+      ),
       body: ListView.builder(
           itemCount: MailGenerator.mailListLength,
           itemBuilder: (context, position) {
@@ -86,7 +88,6 @@ class _MessagePageState extends State<MessagePage> {
                                     )
                                   ],
                                 ),
-                                Icon(Icons.star_border, size: 25.0),
                               ],
                             ),
                           ],

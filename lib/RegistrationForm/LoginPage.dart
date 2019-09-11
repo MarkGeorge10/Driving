@@ -1,6 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../MyHomePage.dart';
+import 'User.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,9 +21,108 @@ class _LoginPageState extends State<LoginPage> {
   String errorUsernamePassword;
   bool passwordVisibility = false;
   final _formKey = GlobalKey<FormState>();
+  final Connectivity _connectivity = new Connectivity();
+  StreamSubscription<ConnectivityResult> _connectionSubscription;
+  String _connectionStatus;
 
-  TextEditingController _emailTextController = TextEditingController();
+  TextEditingController _userNameTextController = TextEditingController();
   TextEditingController _passwordTextController = TextEditingController();
+
+  Future<Null> initConnectivity() async {
+    String connectionStatus;
+
+    try {
+      connectionStatus = (await _connectivity.checkConnectivity()).toString();
+    } catch (PlatformException) {
+      print(PlatformException.toString());
+      connectionStatus = "Internet connectivity failed";
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _connectionStatus = connectionStatus;
+    });
+    print("InitConnectivity : $_connectionStatus");
+    if (_connectionStatus == "ConnectivityResult.wifi") {
+      validateForm();
+      print("gggggggggggggg");
+    } else {
+      _showDialog("You are not connected to internet");
+    }
+  }
+
+  Future<User> createPost(String url, {Map body}) async {
+    print(body);
+
+    _showWaiting();
+
+    try {
+      return http.post(url, body: body).then((http.Response response) async {
+        final String responseBody = response.body;
+        String jsondecode = json.decode(responseBody)["message"];
+        print(json.decode(responseBody)["message"]);
+
+        if (jsondecode == "Loggedin successfully.") {
+          User userGet =
+              User.fromJson(json.decode(responseBody)["data"]["user"]);
+          print(userGet.username);
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          //  prefs.setInt("idPref", user.userId);
+          prefs.setString("usernamePref", userGet.username);
+          prefs.setString("firstNamePref", userGet.firstName);
+          prefs.setString("lastNamePref", userGet.lastName);
+          prefs.setString("emailPref", userGet.email);
+        }
+        return null;
+      });
+    } catch (ex) {
+      _showDialog("Something happened errored");
+    }
+    _showDialog("Something happened errored");
+    return null;
+  }
+
+  void _showWaiting() {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          title: new Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showDialog(String str) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          //title: new Text("Alert Dialog title"),
+          content: new Text(str),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Ok"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
 //      padding: EdgeInsets.only(left: 20, right: 15),
                   child: TextFormField(
+                    controller: _userNameTextController,
                     obscureText: false,
                     style: TextStyle(fontSize: 18),
                     decoration: InputDecoration(
@@ -57,6 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
 //      padding: EdgeInsets.only(left: 20, right: 15),
                   child: TextFormField(
+                    controller: _passwordTextController,
                     obscureText: !passwordVisibility,
                     style: TextStyle(fontSize: 18),
                     decoration: InputDecoration(
@@ -173,6 +281,13 @@ class _LoginPageState extends State<LoginPage> {
 
     if (formState.validate()) {
       formState.reset();
+      User newUser = User(
+        username: _userNameTextController.text,
+        password: _passwordTextController.text,
+      );
+      User user = await createPost(
+          'https://drivinginstructorsdiary.com/app/api/auth?',
+          body: newUser.toLogin());
 
       Navigator.pushAndRemoveUntil(
           context,

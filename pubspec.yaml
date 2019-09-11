@@ -24,6 +24,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   table_calendar:
+  http: 0.12.0+2
+  shared_preferences: 0.5.3+4
+  connectivity: 0.4.3+7
 
 dev_dependencies:
   flutter_test:

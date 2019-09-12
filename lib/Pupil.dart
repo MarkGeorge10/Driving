@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Pupils extends StatefulWidget {
   @override
@@ -6,6 +10,33 @@ class Pupils extends StatefulWidget {
 }
 
 class _PupilsState extends State<Pupils> {
+  Future<String> getID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var data = prefs.get("idPref");
+    print(data);
+    return data;
+  }
+
+  List<dynamic> pupilItem;
+
+  Future<List<dynamic>> fetchMsg(String url) async {
+    //print(body);
+
+    try {
+      return http.post(url).then((http.Response response) async {
+        final String responseBody = response.body;
+        pupilItem = json.decode(responseBody)["data"]["data"];
+        print(pupilItem.length);
+
+        return pupilItem;
+      });
+    } catch (ex) {
+      //_showDialog("Something happened errored");
+    }
+    // _showDialog("Something happened errored");
+    return null;
+  }
+
   final TextEditingController _searchControl = new TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -56,22 +87,42 @@ class _PupilsState extends State<Pupils> {
             ),
           ),
         ),
-        body: ListView.builder(
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 10.0,
-                child: ListTile(
-                  leading: Container(
-                    child: Icon(
-                      Icons.account_circle,
-                      size: 50.0,
-                    ),
-                  ),
-                  title: Text("First Name" + " Last Name"),
-                  subtitle: Text("Email"),
-                ),
-              );
-            }));
+        body: FutureBuilder(
+          future: getID(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return FutureBuilder(
+                  future: fetchMsg(
+                      "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
+                  builder: (context, snap) {
+                    if (snap.hasData) {
+                      return ListView.builder(
+                          itemCount: snap.data.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              elevation: 10.0,
+                              child: ListTile(
+                                leading: Container(
+                                  child: Icon(
+                                    Icons.account_circle,
+                                    size: 50.0,
+                                  ),
+                                ),
+                                title: Text(snap.data[index]["username"]),
+                                subtitle: Text(snap.data[index]["email"]),
+                              ),
+                            );
+                          });
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  });
+            }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ));
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class LessonsPage extends StatefulWidget {
   @override
@@ -7,6 +10,26 @@ class LessonsPage extends StatefulWidget {
 
 class _LessonsPageState extends State<LessonsPage> {
   final TextEditingController _searchControl = new TextEditingController();
+
+  List<dynamic> lessonItem;
+
+  Future<List<dynamic>> fetchLessons(String url) async {
+    //print(body);
+
+    try {
+      return http.post(url).then((http.Response response) async {
+        final String responseBody = response.body;
+        lessonItem = json.decode(responseBody)["results"];
+        print(lessonItem.length);
+
+        return lessonItem;
+      });
+    } catch (ex) {
+      //_showDialog("Something happened errored");
+    }
+    // _showDialog("Something happened errored");
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,21 +80,32 @@ class _LessonsPageState extends State<LessonsPage> {
             ),
           ),
         ),
-        body: ListView.builder(
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              return Card(
-                elevation: 10.0,
-                child: ListTile(
-                  leading: Container(
-                    child: Icon(
-                      Icons.account_circle,
-                      size: 50.0,
-                    ),
-                  ),
-                  title: Text("Lesson Name"),
-                  subtitle: Text("Email"),
-                ),
+        body: FutureBuilder(
+            future: fetchLessons(
+                "https://drivinginstructorsdiary.com/app/api/getLessonTypeApi?pageLimit=100"),
+            builder: (context, snap) {
+              if (snap.hasData) {
+                return ListView.builder(
+                    itemCount: snap.data.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        elevation: 10.0,
+                        child: ListTile(
+                          leading: Container(
+                            child: Icon(
+                              Icons.drive_eta,
+                              color: Colors.orange,
+                              size: 50.0,
+                            ),
+                          ),
+                          title: Text(snap.data[index]["text"]),
+                          //subtitle: Text("Email"),
+                        ),
+                      );
+                    });
+              }
+              return Center(
+                child: CircularProgressIndicator(),
               );
             }));
   }

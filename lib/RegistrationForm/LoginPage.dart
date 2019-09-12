@@ -25,8 +25,8 @@ class _LoginPageState extends State<LoginPage> {
   StreamSubscription<ConnectivityResult> _connectionSubscription;
   String _connectionStatus;
 
-  TextEditingController _userNameTextController = TextEditingController();
-  TextEditingController _passwordTextController = TextEditingController();
+  TextEditingController _userNameTextController = new TextEditingController();
+  TextEditingController _passwordTextController = new TextEditingController();
 
   Future<Null> initConnectivity() async {
     String connectionStatus;
@@ -61,22 +61,32 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       return http.post(url, body: body).then((http.Response response) async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
         final String responseBody = response.body;
         String jsondecode = json.decode(responseBody)["message"];
         print(json.decode(responseBody)["message"]);
 
         if (jsondecode == "Loggedin successfully.") {
+          print("yes");
           User userGet =
               User.fromJson(json.decode(responseBody)["data"]["user"]);
-          print(userGet.username);
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          //  prefs.setInt("idPref", user.userId);
+          print(userGet.id);
+
+          prefs.setString("idPref", userGet.id);
           prefs.setString("usernamePref", userGet.username);
           prefs.setString("firstNamePref", userGet.firstName);
           prefs.setString("lastNamePref", userGet.lastName);
           prefs.setString("emailPref", userGet.email);
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MyHomePage()),
+              ModalRoute.withName('/LoginPage'));
+          return userGet;
+        } else {
+          _showDialog(jsondecode);
+          return null;
         }
-        return null;
       });
     } catch (ex) {
       _showDialog("Something happened errored");
@@ -282,17 +292,14 @@ class _LoginPageState extends State<LoginPage> {
     if (formState.validate()) {
       formState.reset();
       User newUser = User(
-        username: _userNameTextController.text,
-        password: _passwordTextController.text,
+        username: _userNameTextController.text.toString(), // "didinstructor",
+        password: _passwordTextController.text.toString(), //"instructor123456"
       );
       User user = await createPost(
           'https://drivinginstructorsdiary.com/app/api/auth?',
           body: newUser.toLogin());
-
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
-          ModalRoute.withName('/LoginPage'));
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      print("666666666666666666666" + preferences.getString("idPref"));
     }
   }
 }

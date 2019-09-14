@@ -94,7 +94,7 @@ class _LessonsPageState extends State<LessonsPage> {
                           leading: Container(
                             child: Icon(
                               Icons.drive_eta,
-                              color: Colors.orange,
+                              color: Colors.green,
                               size: 50.0,
                             ),
                           ),

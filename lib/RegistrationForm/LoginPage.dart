@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../MyHomePage.dart';
+import '../HomePage.dart';
 import 'User.dart';
 
 class LoginPage extends StatefulWidget {
@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
 
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => MyHomePage()),
+              MaterialPageRoute(builder: (context) => HomePage()),
               ModalRoute.withName('/LoginPage'));
           return userGet;
         } else {
@@ -231,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
         shape: StadiumBorder(),
-        color: Colors.deepOrange,
+        color: Colors.green,
         splashColor: Colors.indigo,
         padding: EdgeInsets.fromLTRB(size.width / 8, 15, size.width / 8, 15),
       ),

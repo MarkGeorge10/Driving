@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'RegistrationForm/LoginPage.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -22,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
       "icon": Icons.calendar_today,
       "footer": "View Diary",
       "navigation": '/CalenderPage',
-      "color": Colors.green,
+      "color": Colors.greenAccent,
       "Stat": "17",
       "Stat_Comment": "Today's Lessons!"
     },
@@ -52,22 +49,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   ];
 
-  logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-        ModalRoute.withName('/Categories'));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text("Home Page"),
         ),
-        drawer: buildDrawer(),
+        // drawer: buildDrawer(),
         body: ListView.builder(
             itemCount: dashboard.length,
             itemBuilder: (context, index) {
@@ -136,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
             }));
   }
 
-  Widget buildDrawer() {
+  /*Widget buildDrawer() {
     return new Drawer(
       child: new ListView(
         children: <Widget>[
@@ -275,5 +263,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
-  }
+  }*/
 }

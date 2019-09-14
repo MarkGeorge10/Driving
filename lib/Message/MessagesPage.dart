@@ -70,91 +70,32 @@ class _MessagePageState extends State<MessagePage> {
                                             snap.data[position]["subject"],
                                             snap.data[position]["message"])));
                               },
-                              child: Column(children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 14.0,
-                                      right: 14.0,
-                                      top: 5.0,
-                                      bottom: 5.0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.account_circle,
-                                        size: 55.0,
-                                        color: Colors.red,
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 10.0),
-                                          child: Column(
-                                            children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  Text(
-                                                    snap.data[position][
-                                                                "receiver_sender_name"] ==
-                                                            ""
-                                                        ? "Sender Name"
-                                                        : msgItem[position][
-                                                            "receiver_sender_name"],
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colors.black87,
-                                                        fontSize: 17.0),
-                                                  ),
-                                                  Text(
-                                                    "",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: Colors.black54,
-                                                        fontSize: 13.5),
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        snap.data[position]
-                                                            ["subject"],
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color:
-                                                                Colors.black54,
-                                                            fontSize: 15.5),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                              child: Card(
+                                color: snap.data[position]["read_status"] == "0"
+                                    ? Colors.grey
+                                    : Colors.white,
+                                child: ListTile(
+                                  title: Text(
+                                    snap.data[position]
+                                                ["receiver_sender_name"] ==
+                                            ""
+                                        ? "Sender Name"
+                                        : msgItem[position]
+                                            ["receiver_sender_name"],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87,
+                                        fontSize: 17.0),
+                                  ),
+                                  subtitle: Text(
+                                    snap.data[position]["subject"],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black54,
+                                        fontSize: 15.5),
                                   ),
                                 ),
-                                Divider(),
-                              ]),
+                              ),
                             );
                           });
                     }

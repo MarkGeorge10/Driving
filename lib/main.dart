@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Calender page.dart';
+import 'HomePage.dart';
 import 'LessonsPage.dart';
 import 'Message/MessagesPage.dart';
-import 'MyHomePage.dart';
 import 'Pupil.dart';
 import 'RegistrationForm/LoginPage.dart';
 
@@ -39,13 +39,13 @@ class _MyAPPState extends State<MyAPP> {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
+        primarySwatch: Colors.green,
       ),
       home: FutureBuilder(
         future: getEmail(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return MyHomePage();
+            return HomePage();
           }
           return LoginPage();
         },

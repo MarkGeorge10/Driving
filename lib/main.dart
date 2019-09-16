@@ -1,12 +1,15 @@
+import 'package:driving_instructor/PupilPackage/Pupil.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Calender page.dart';
 import 'HomePage.dart';
 import 'LessonsPage.dart';
+import 'Message/AddMessage.dart';
 import 'Message/MessagesPage.dart';
-import 'Pupil.dart';
+import 'PupilPackage/PupilDetailed.dart';
 import 'RegistrationForm/LoginPage.dart';
+import 'TransactionPackage/AddTransaction.dart';
 
 void main() => runApp(MyAPP());
 
@@ -56,6 +59,9 @@ class _MyAPPState extends State<MyAPP> {
         '/LessonsPage': (context) => LessonsPage(),
         '/CalenderPage': (context) => CalenderPage(),
         '/LoginPage': (context) => LoginPage(),
+        '/AddTransaction': (context) => AddTransaction(),
+        '/PupilDetailed': (context) => PupilDetailed(),
+        '/AddMessage': (context) => AddMessage(),
       },
     );
   }

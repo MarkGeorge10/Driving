@@ -61,6 +61,7 @@ class _MessagePageState extends State<MessagePage> {
                             //MailContent mailContent = MailGenerator.getMailContent(position);
                             return InkWell(
                               onTap: () {
+                                //   print(snapshot.data[position]["receiver_id"]);
                                 Navigator.push(
                                     context,
                                     new MaterialPageRoute(
@@ -68,7 +69,9 @@ class _MessagePageState extends State<MessagePage> {
                                             snap.data[position]
                                                 ["receiver_sender_name"],
                                             snap.data[position]["subject"],
-                                            snap.data[position]["message"])));
+                                            snap.data[position]["message"],
+                                            snap.data[position]
+                                                ["receiver_id"])));
                               },
                               child: Card(
                                 color: snap.data[position]["read_status"] == "0"
@@ -108,6 +111,12 @@ class _MessagePageState extends State<MessagePage> {
               child: CircularProgressIndicator(),
             );
           }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/AddMessage');
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

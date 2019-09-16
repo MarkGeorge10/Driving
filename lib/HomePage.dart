@@ -1,10 +1,11 @@
+import 'package:driving_instructor/PupilPackage/Pupil.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'LessonsPage.dart';
 import 'Message/MessagesPage.dart';
-import 'Pupil.dart';
 import 'RegistrationForm/LoginPage.dart';
+import 'TransactionPackage/TransactionPage.dart';
 
 class HomePage extends StatefulWidget {
   // This widget is the home page of your application. It is stateful, meaning
@@ -64,7 +65,12 @@ class _MyHomePageState extends State<HomePage> {
         physics: NeverScrollableScrollPhysics(),
         controller: _pageController,
         onPageChanged: onPageChanged,
-        children: <Widget>[MessagePage(), Pupils(), LessonsPage()],
+        children: <Widget>[
+          MessagePage(),
+          Pupils(),
+          LessonsPage(),
+          TransactionPage()
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: new Row(
@@ -98,10 +104,18 @@ class _MyHomePageState extends State<HomePage> {
             ),
             IconButton(
               icon: Icon(
-                Icons.exit_to_app,
+                Icons.call_to_action,
                 size: 24.0,
               ),
               color: _page == 3 ? Colors.white : Colors.white,
+              onPressed: () => _pageController.jumpToPage(3),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.exit_to_app,
+                size: 24.0,
+              ),
+              color: _page == 4 ? Colors.white : Colors.white,
               onPressed: () {
                 logout();
               },

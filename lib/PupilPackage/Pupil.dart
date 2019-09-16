@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'PupilDetailed.dart';
+
 class Pupils extends StatefulWidget {
   @override
   _PupilsState createState() => _PupilsState();
@@ -99,17 +101,39 @@ class _PupilsState extends State<Pupils> {
                       return ListView.builder(
                           itemCount: snap.data.length,
                           itemBuilder: (context, index) {
-                            return Card(
-                              elevation: 10.0,
-                              child: ListTile(
-                                leading: Container(
-                                  child: Icon(
-                                    Icons.account_circle,
-                                    size: 50.0,
+                            return InkWell(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(new MaterialPageRoute(
+                                        builder: (context) => PupilDetailed(
+                                              firstName: snap.data[index]
+                                                  ["first_name"],
+                                              lastName: snap.data[index]
+                                                  ["last_name"],
+                                              email: snap.data[index]["email"],
+                                              address: snap.data[index]
+                                                  ["address"],
+                                              phone: snap.data[index]["mobile"],
+                                              company: snap.data[index]
+                                                  ["company"],
+                                              instructorName: snap.data[index]
+                                                  ["instructor_name"],
+                                              createdAt: snap.data[index]
+                                                  ["created_at"],
+                                            )));
+                              },
+                              child: Card(
+                                elevation: 10.0,
+                                child: ListTile(
+                                  leading: Container(
+                                    child: Icon(
+                                      Icons.account_circle,
+                                      size: 50.0,
+                                    ),
                                   ),
+                                  title: Text(snap.data[index]["username"]),
+                                  subtitle: Text(snap.data[index]["mobile"]),
                                 ),
-                                title: Text(snap.data[index]["username"]),
-                                subtitle: Text(snap.data[index]["email"]),
                               ),
                             );
                           });

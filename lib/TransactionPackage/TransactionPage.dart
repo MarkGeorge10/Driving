@@ -24,12 +24,52 @@ class _TransactionPageState extends State<TransactionPage> {
     try {
       return http.post(url).then((http.Response response) async {
         final String responseBody = response.body;
-        transactionItem = json.decode(responseBody)["data"];
+        transactionItem = json.decode(responseBody)["data"]["data"];
 
         print("mark");
-        print(transactionItem[0]);
+        print(transactionItem);
 
         return transactionItem;
+      });
+    } catch (ex) {
+      //_showDialog("Something happened errored");
+    }
+    // _showDialog("Something happened errored");
+    return null;
+  }
+
+  void _showDialog(String str) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          //title: new Text("Alert Dialog title"),
+          content: new Text(str),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Ok"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteTransaction(String url) async {
+    print(url);
+
+    try {
+      return http.post(url).then((http.Response response) async {
+        final String responseBody = response.body;
+        String jsondecode = json.decode(responseBody);
+        print(jsondecode);
+        _showDialog(jsondecode);
       });
     } catch (ex) {
       //_showDialog("Something happened errored");
@@ -50,27 +90,102 @@ class _TransactionPageState extends State<TransactionPage> {
           if (snapshot.hasData) {
             return FutureBuilder(
               future: fetchTransaction(
-                  "https://drivinginstructorsdiary.com/app/api/viewMessageApi?instructor_id=" +
+                  "https://drivinginstructorsdiary.com/app/api/viewTransactionApi?instructor_id=" +
                       "${snapshot.data}"),
               builder: (context, snap) {
                 if (snap.hasData) {
                   return ListView.builder(
-                      itemCount: snap.data.lenght,
+                      itemCount: snap.data.length,
                       itemBuilder: (context, index) {
                         return Card(
                             elevation: 5.0,
                             child: ListTile(
                               contentPadding: EdgeInsets.all(15.0),
-                              leading: Text(snap.data[index]["type"]),
-                              subtitle: Text(snap.data[index]["date"]),
+                              subtitle: Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 50,
+                                  ),
+                                  Text(
+                                    "Description",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(snap.data[index]["note"] == null
+                                      ? "No Notes Added"
+                                      : snap.data[index]["note"]),
+                                ],
+                              ),
                               title: Center(
                                   child: Column(
                                 children: <Widget>[
-                                  Text(snap.data[index]["hours"]),
-                                  Text(snap.data[index]["status"]),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "Payment : ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Flexible(
+                                          child: Text(snap.data[index]
+                                              ["payment_method"])),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "amount: ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(snap.data[index]["amount"]),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "Status: ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(snap.data[index]["status"]),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "Hours: ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(snap.data[index]["hours"] == null
+                                          ? "No addede hrs"
+                                          : snap.data[index]["hours"]),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "type: ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Text(snap.data[index]["type"] == null
+                                          ? "No addede type"
+                                          : snap.data[index]["type"]),
+                                    ],
+                                  ),
                                 ],
                               )),
-                              trailing: Icon(Icons.delete),
+                              trailing: IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    deleteTransaction(
+                                        "https://drivinginstructorsdiary.com/app/api/deleteTransactionApi/" +
+                                            "${snap.data[index]["id"]}");
+                                  }),
                             ));
                       });
                 }

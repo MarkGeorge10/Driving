@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'PupilDetailed.dart';
+import 'UpdatePupil.dart';
 
 class Pupils extends StatefulWidget {
   @override
@@ -120,6 +121,7 @@ class _PupilsState extends State<Pupils> {
                                                   ["instructor_name"],
                                               createdAt: snap.data[index]
                                                   ["created_at"],
+                                              id: snap.data[index]["id"],
                                             )));
                               },
                               child: Card(
@@ -133,6 +135,15 @@ class _PupilsState extends State<Pupils> {
                                   ),
                                   title: Text(snap.data[index]["username"]),
                                   subtitle: Text(snap.data[index]["mobile"]),
+                                  trailing: IconButton(
+                                      icon: Icon(Icons.update),
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            new MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UpdatePupil(snap.data[index]
+                                                        ["id"])));
+                                      }),
                                 ),
                               ),
                             );

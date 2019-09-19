@@ -2,6 +2,7 @@ import 'package:driving_instructor/PupilPackage/Pupil.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'DairyPackage/Choice.dart';
 import 'LessonsPage.dart';
 import 'Message/MessagesPage.dart';
 import 'RegistrationForm/LoginPage.dart';
@@ -67,6 +68,7 @@ class _MyHomePageState extends State<HomePage> {
         onPageChanged: onPageChanged,
         children: <Widget>[
           MessagePage(),
+          Choice(),
           Pupils(),
           LessonsPage(),
           TransactionPage()
@@ -88,7 +90,7 @@ class _MyHomePageState extends State<HomePage> {
             ),
             IconButton(
               icon: Icon(
-                Icons.account_box,
+                Icons.calendar_today,
                 size: 24.0,
               ),
               color: _page == 1 ? Colors.white : Colors.white,
@@ -96,7 +98,7 @@ class _MyHomePageState extends State<HomePage> {
             ),
             IconButton(
               icon: Icon(
-                Icons.drive_eta,
+                Icons.account_box,
                 size: 24.0,
               ),
               color: _page == 2 ? Colors.white : Colors.white,
@@ -104,7 +106,7 @@ class _MyHomePageState extends State<HomePage> {
             ),
             IconButton(
               icon: Icon(
-                Icons.call_to_action,
+                Icons.drive_eta,
                 size: 24.0,
               ),
               color: _page == 3 ? Colors.white : Colors.white,
@@ -112,10 +114,18 @@ class _MyHomePageState extends State<HomePage> {
             ),
             IconButton(
               icon: Icon(
-                Icons.exit_to_app,
+                Icons.call_to_action,
                 size: 24.0,
               ),
               color: _page == 4 ? Colors.white : Colors.white,
+              onPressed: () => _pageController.jumpToPage(4),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.exit_to_app,
+                size: 24.0,
+              ),
+              color: _page == 5 ? Colors.white : Colors.white,
               onPressed: () {
                 logout();
               },

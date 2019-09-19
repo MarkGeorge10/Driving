@@ -1,8 +1,13 @@
+import 'package:driving_instructor/DairyPackage/Calender page.dart';
 import 'package:driving_instructor/PupilPackage/Pupil.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Calender page.dart';
+import 'DairyPackage/Choice.dart';
+import 'DairyPackage/CreateBlocked.dart';
+import 'DairyPackage/CreateHoliday.dart';
+import 'DairyPackage/CreateLesson.dart';
+import 'DairyPackage/CreateTest.dart';
 import 'HomePage.dart';
 import 'LessonsPage.dart';
 import 'Message/AddMessage.dart';
@@ -62,6 +67,11 @@ class _MyAPPState extends State<MyAPP> {
         '/AddTransaction': (context) => AddTransaction(),
         '/PupilDetailed': (context) => PupilDetailed(),
         '/AddMessage': (context) => AddMessage(),
+        '/Choice': (context) => Choice(),
+        '/CreateHoliday': (context) => CreateHoliday(),
+        '/CreateBlocked': (context) => CreateBlocked(),
+        '/CreateLesson': (context) => CreateLesson(),
+        '/CreateTest': (context) => CreateTest(),
       },
     );
   }

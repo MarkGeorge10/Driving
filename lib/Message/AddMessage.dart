@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:driving_instructor/PupilPackage/API.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,6 +65,9 @@ class _AddMessageState extends State<AddMessage> {
     return dat;
   }
 
+  String pupilItemstr;
+
+  API api = new API();
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -85,65 +89,94 @@ class _AddMessageState extends State<AddMessage> {
                     })
               ],
             ),
-            body: Form(
-              key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 40,
-                    ),
-                    TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: _receiverIdController,
-                      decoration: InputDecoration(
-                        hintText: "Receiver ID",
-                        hintStyle: TextStyle(fontSize: 18),
+            body: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 40,
                       ),
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return "Receiver Id can't be empty";
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 40,
-                    ),
-                    TextFormField(
-                      controller: _subjectController,
-                      decoration: InputDecoration(
-                        labelText: "Subject",
-                        hintText: "Subject",
-                        hintStyle: TextStyle(fontSize: 18),
+                      FutureBuilder(
+                        future: api.fetchMsg(
+                            "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
+                        builder: (context, snap) {
+                          if (snap.hasData) {
+                            List<DropdownMenuItem<String>> items = new List();
+
+                            for (int i = 0; i < snap.data.length; i++) {
+                              String pupil = snap.data[i]["username"];
+                              String pupilID = snap.data[i]["id"];
+                              // here we are creating the drop down menu items, you can customize the item right here
+                              // but I'll just use a simple text for this
+                              items.add(new DropdownMenuItem(
+                                  value: pupilID, child: new Text(pupil)));
+                            }
+                            pupilItemstr = items[0].value;
+                            void changedDropDownPupilItem(String selectedCity) {
+                              print(
+                                  "Selected city $selectedCity, we are going to refresh the UI");
+                              setState(() {
+                                pupilItemstr = selectedCity;
+                              });
+                            }
+
+                            return ListTile(
+                              title: Text(
+                                "Pupil ID",
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              subtitle: new DropdownButton(
+                                value: pupilItemstr,
+                                items: items,
+                                onChanged: changedDropDownPupilItem,
+                              ),
+                            );
+                          }
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
                       ),
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return "Receiver Id can't be empty";
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 40,
-                    ),
-                    TextFormField(
-                      controller: _messageController,
-                      maxLines: 7,
-                      decoration: InputDecoration(
-                        labelText: "Message",
-                        hintText: "Message",
-                        hintStyle: TextStyle(fontSize: 18),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 40,
                       ),
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return "Receiver Id can't be empty";
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
+                      TextFormField(
+                        controller: _subjectController,
+                        decoration: InputDecoration(
+                          labelText: "Subject",
+                          hintText: "Subject",
+                          hintStyle: TextStyle(fontSize: 18),
+                        ),
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return "Receiver Id can't be empty";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 40,
+                      ),
+                      TextFormField(
+                        controller: _messageController,
+                        maxLines: 7,
+                        decoration: InputDecoration(
+                          labelText: "Message",
+                          hintText: "Message",
+                          hintStyle: TextStyle(fontSize: 18),
+                        ),
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return "Receiver Id can't be empty";
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -161,7 +194,7 @@ class _AddMessageState extends State<AddMessage> {
 
     if (formState.validate()) {
       await createMsg(url, body: {
-        "recipient": _receiverIdController.text,
+        "recipient": pupilItemstr,
         "subject": _subjectController.text,
         "message": _messageController.text,
       });

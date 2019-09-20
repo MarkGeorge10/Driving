@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class TransactionPage extends StatefulWidget {
+class ReportPage extends StatefulWidget {
   @override
-  _TransactionPageState createState() => _TransactionPageState();
+  _ReportPageState createState() => _ReportPageState();
 }
 
-class _TransactionPageState extends State<TransactionPage> {
+class _ReportPageState extends State<ReportPage> {
   Future<String> getID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var dat = prefs.get("idPref");
@@ -18,13 +18,13 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   List<dynamic> transactionItem;
-  Future<List<dynamic>> fetchTransaction(String url) async {
+  Future<List<dynamic>> fetchReport(String url) async {
     print(url);
 
     try {
       return http.post(url).then((http.Response response) async {
         final String responseBody = response.body;
-        transactionItem = json.decode(responseBody)["data"]["data"];
+        transactionItem = json.decode(responseBody)["data"]["progress_report"];
 
         print("mark");
         print(transactionItem);
@@ -61,36 +61,19 @@ class _TransactionPageState extends State<TransactionPage> {
     );
   }
 
-  Future<void> deleteTransaction(String url) async {
-    print(url);
-
-    try {
-      return http.post(url).then((http.Response response) async {
-        final String responseBody = response.body;
-        String jsondecode = json.decode(responseBody);
-        print(jsondecode);
-        _showDialog(jsondecode);
-      });
-    } catch (ex) {
-      //_showDialog("Something happened errored");
-    }
-    // _showDialog("Something happened errored");
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("TranscationPage"),
+        title: Text("Progress Report Page"),
       ),
       body: FutureBuilder(
         future: getID(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return FutureBuilder(
-              future: fetchTransaction(
-                  "https://drivinginstructorsdiary.com/app/api/viewTransactionApi?instructor_id=" +
+              future: fetchReport(
+                  "https://drivinginstructorsdiary.com/app/api/progressReportApi/" +
                       "${snapshot.data}"),
               builder: (context, snap) {
                 if (snap.hasData) {
@@ -179,13 +162,6 @@ class _TransactionPageState extends State<TransactionPage> {
                                   ),
                                 ],
                               )),
-                              trailing: IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {
-                                    deleteTransaction(
-                                        "https://drivinginstructorsdiary.com/app/api/deleteTransactionApi/" +
-                                            "${snap.data[index]["id"]}");
-                                  }),
                             ));
                       });
                 }
@@ -203,12 +179,6 @@ class _TransactionPageState extends State<TransactionPage> {
             child: CircularProgressIndicator(),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/AddTransaction');
-        },
-        child: Icon(Icons.add),
       ),
     );
   }

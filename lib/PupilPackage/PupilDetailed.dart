@@ -6,10 +6,9 @@ class PupilDetailed extends StatefulWidget {
       lastName,
       address,
       createdAt,
-      company,
       instructorName,
       email,
-      id,
+      postalCode,
       phone;
   PupilDetailed(
       {this.firstName,
@@ -17,10 +16,9 @@ class PupilDetailed extends StatefulWidget {
       this.email,
       this.address,
       this.phone,
-      this.company,
       this.instructorName,
       this.createdAt,
-      this.id});
+      this.postalCode});
   @override
   _PupilDetailedState createState() => _PupilDetailedState();
 }
@@ -40,12 +38,12 @@ class _PupilDetailedState extends State<PupilDetailed> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      "ID: ",
+                      "Postal Code: ",
                       style: TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 17.0),
                     ),
                     Text(
-                      widget.id,
+                      widget.postalCode,
                       style: TextStyle(fontSize: 15.0),
                     )
                   ],
@@ -127,21 +125,6 @@ class _PupilDetailedState extends State<PupilDetailed> {
                         textWidthBasis: TextWidthBasis.parent,
                         style: TextStyle(fontSize: 15.0),
                       ),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "Company: ",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 17.0),
-                    ),
-                    Text(
-                      widget.company,
-                      style: TextStyle(fontSize: 15.0),
                     )
                   ],
                 ),

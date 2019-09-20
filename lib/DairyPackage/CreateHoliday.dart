@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateHoliday extends StatefulWidget {
@@ -64,6 +66,8 @@ class _CreateHolidayState extends State<CreateHoliday> {
     );
   }
 
+  final dateFormat = DateFormat("dd/MM/yyyy");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,22 +86,24 @@ class _CreateHolidayState extends State<CreateHoliday> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
                         ),
-                        TextFormField(
-                          keyboardType: TextInputType.datetime,
-                          decoration: InputDecoration(
-                            labelText: "Date",
-                            hintText: "1/2/2019",
-                            hintStyle: TextStyle(fontSize: 18),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                          ),
+                        DateTimeField(
+                          format: dateFormat,
                           controller: _dateController,
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "Date field should not be empty";
-                            }
-                            return null;
+                          onShowPicker: (context, currentValue) {
+                            return showDatePicker(
+                                context: context,
+                                firstDate: DateTime(1900),
+                                initialDate: currentValue ?? DateTime.now(),
+                                lastDate: DateTime(2100));
                           },
+                          decoration: InputDecoration(
+                              labelText: 'Date',
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15))),
+                          /* onChanged: (dt) => setState(() {
+                            date = "$dt";
+                            print(dt);
+                          }),*/
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
@@ -179,7 +185,7 @@ class _CreateHolidayState extends State<CreateHoliday> {
 
     if (formState.validate()) {
       await createTransaction(url, body: {
-        "date": _dateController.text,
+        "date": _dateController.text.substring(0, 9),
         "durationDays": _durationDaysController.text,
         "reason": _reasonController.text
       });

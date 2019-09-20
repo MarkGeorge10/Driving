@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:driving_instructor/PupilPackage/API.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddTransaction extends StatefulWidget {
@@ -14,8 +17,8 @@ class _AddTransactionState extends State<AddTransaction> {
 
   TextEditingController _dateController = new TextEditingController();
   TextEditingController _hoursController = new TextEditingController();
-  TextEditingController _clientIdController = new TextEditingController();
   TextEditingController _amountController = new TextEditingController();
+  TextEditingController _pupilIDController = new TextEditingController();
 
   TextEditingController _noteController = new TextEditingController();
 
@@ -57,12 +60,20 @@ class _AddTransactionState extends State<AddTransaction> {
 
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _category;
+  int indexCategory;
 
   List<DropdownMenuItem<String>> _dropDownMenuPaymentItems;
   String _payment;
 
   List<DropdownMenuItem<String>> _dropDownMenuStatusItems;
   String _stat;
+
+  List<DropdownMenuItem<String>> _dropDownMenuPupilItems;
+  String pupilItemstr;
+  final dateFormat = DateFormat("dd/MM/yyyy");
+  DateTime date;
+
+  API api = new API();
 
   @override
   void initState() {
@@ -71,6 +82,7 @@ class _AddTransactionState extends State<AddTransaction> {
     _dropDownMenuStatusItems = getDropDownStatusMenuItems();
     _category = _dropDownMenuItems[0].value;
     _payment = _dropDownMenuPaymentItems[0].value;
+
     _stat = _dropDownMenuStatusItems[0].value;
     super.initState();
   }
@@ -136,8 +148,8 @@ class _AddTransactionState extends State<AddTransaction> {
     try {
       return http.post(url, body: body).then((http.Response response) async {
         final String responseBody = response.body;
-        String jsondecode = json.decode(responseBody);
-        print(json.decode(responseBody));
+        String jsondecode = json.decode(responseBody)["message"];
+        _showDialog(jsondecode);
       });
     } catch (ex) {
       _showDialog("Something happened errored");
@@ -194,42 +206,64 @@ class _AddTransactionState extends State<AddTransaction> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 40,
                     ),
-                    TextFormField(
-                      keyboardType: TextInputType.datetime,
-                      decoration: InputDecoration(
-                        labelText: "Client ID",
-                        hintText: "Client ID",
-                        hintStyle: TextStyle(fontSize: 18),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                      ),
-                      controller: _clientIdController,
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return "Client ID field should not be empty";
+                    FutureBuilder(
+                      future: api.fetchMsg(
+                          "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snap.data}"),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<DropdownMenuItem<String>> items = new List();
+
+                          for (int i = 0; i < snapshot.data.length; i++) {
+                            String pupil = snapshot.data[i]["username"];
+                            String pupilID = snapshot.data[i]["id"];
+                            // here we are creating the drop down menu items, you can customize the item right here
+                            // but I'll just use a simple text for this
+                            items.add(new DropdownMenuItem(
+                                value: pupilID, child: new Text(pupil)));
+                          }
+                          pupilItemstr = items[0].value;
+                          void changedDropDownPupilItem(String selectedCity) {
+                            print(
+                                "Selected city $selectedCity, we are going to refresh the UI");
+                            setState(() {
+                              pupilItemstr = selectedCity;
+                            });
+                          }
+
+                          return ListTile(
+                            title: Text(
+                              "Pupil ID",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: new DropdownButton(
+                              value: pupilItemstr,
+                              items: items,
+                              onChanged: changedDropDownPupilItem,
+                            ),
+                          );
                         }
-                        return null;
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
                       },
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 40,
                     ),
-                    TextFormField(
-                      keyboardType: TextInputType.datetime,
-                      decoration: InputDecoration(
-                        labelText: "Date",
-                        hintText: "1/2/2019",
-                        hintStyle: TextStyle(fontSize: 18),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                      ),
+                    DateTimeField(
+                      format: dateFormat,
                       controller: _dateController,
-                      validator: (input) {
-                        if (input.isEmpty) {
-                          return "Date field should not be empty";
-                        }
-                        return null;
+                      onShowPicker: (context, currentValue) {
+                        return showDatePicker(
+                            context: context,
+                            firstDate: DateTime(1900),
+                            initialDate: currentValue ?? DateTime.now(),
+                            lastDate: DateTime(2100));
                       },
+                      decoration: InputDecoration(
+                          labelText: 'Date',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15))),
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 40,
@@ -364,11 +398,13 @@ class _AddTransactionState extends State<AddTransaction> {
 
     if (formState.validate()) {
       await createTransaction(url, body: {
-        "client_id": _clientIdController.text,
-        "date": _dateController.text,
+        "client_id": "4",
+        "pupil_id": pupilItemstr,
+
+        "date": _dateController.text.substring(0, 9),
         "amount": _amountController.text,
         "hours": _hoursController.text,
-        "type": _category.toString(),
+        "type": "2", //_category.toString(),
         "payment_method": _payment.toString(),
         "status": _stat.toString(),
         "note": _noteController.text

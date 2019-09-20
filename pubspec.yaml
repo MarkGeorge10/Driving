@@ -28,6 +28,9 @@ dependencies:
   shared_preferences: 0.5.3+4
   connectivity: 0.4.3+7
   flutter_widget_from_html: 0.2.2+1
+  datetime_picker_formfield:
+  intl:
+
 
 
 dev_dependencies:

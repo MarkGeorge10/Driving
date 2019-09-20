@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:table_calendar/table_calendar.dart';
 
 // Example holidays
@@ -24,12 +21,7 @@ class CalenderPage extends StatefulWidget {
 
 class _CalenderPageState extends State<CalenderPage>
     with TickerProviderStateMixin {
-  Map<DateTime, List> _events;
-  List _selectedEvents;
-  CalendarController _calendarController;
-  bool isLoading = false;
-
-  List<dynamic> bookingItems;
+  /* List<dynamic> bookingItems;
   Future<List<dynamic>> fetchBooking(String url) async {
     print(url);
     setState(() {
@@ -57,43 +49,14 @@ class _CalenderPageState extends State<CalenderPage>
     // _showDialog("Something happened errored");
 
     return null;
-  }
+  }*/
 
-  String dt = "2019-07-27 06:00:00";
+  CalendarController _calendarController;
 
   @override
   void initState() {
     super.initState();
-    final _selectedDay = DateTime.now();
-
-    print(dt);
-    fetchBooking(
-        "https://drivinginstructorsdiary.com/app/api/viewBookingApi?instructor_id=1054");
-    _events = {
-      DateTime(2019, 9, 1): [isLoading == true ? bookingItems[0]['type'] : ""],
-    };
-
-    _selectedEvents = _events[_selectedDay] ?? [];
-
     _calendarController = CalendarController();
-  }
-
-  @override
-  void dispose() {
-    _calendarController.dispose();
-    super.dispose();
-  }
-
-  void _onDaySelected(DateTime day, List events) {
-    print('CALLBACK: _onDaySelected');
-    setState(() {
-      _selectedEvents = events;
-    });
-  }
-
-  void _onVisibleDaysChanged(
-      DateTime first, DateTime last, CalendarFormat format) {
-    print('CALLBACK: _onVisibleDaysChanged');
   }
 
   @override
@@ -109,7 +72,7 @@ class _CalenderPageState extends State<CalenderPage>
           //-----------------------
           _buildTableCalendar(),
           const SizedBox(height: 8.0),
-          Expanded(child: _buildEventList()),
+          //Expanded(child: _buildEventList()),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -124,9 +87,10 @@ class _CalenderPageState extends State<CalenderPage>
   Widget _buildTableCalendar() {
     return TableCalendar(
       calendarController: _calendarController,
-      events: _events,
-      initialCalendarFormat: CalendarFormat.twoWeeks,
+      //events: _events,
+      initialCalendarFormat: CalendarFormat.month,
       holidays: _holidays,
+
       startingDayOfWeek: StartingDayOfWeek.sunday,
       calendarStyle: CalendarStyle(
         selectedColor: Colors.deepOrange[400],
@@ -142,12 +106,10 @@ class _CalenderPageState extends State<CalenderPage>
           borderRadius: BorderRadius.circular(16.0),
         ),
       ),
-      onDaySelected: _onDaySelected,
-      onVisibleDaysChanged: _onVisibleDaysChanged,
     );
   }
 
-  Widget _buildEventList() {
+  /* Widget _buildEventList() {
     return ListView(
       children: _selectedEvents
           .map((event) => Container(
@@ -164,5 +126,5 @@ class _CalenderPageState extends State<CalenderPage>
               ))
           .toList(),
     );
-  }
+  }*/
 }

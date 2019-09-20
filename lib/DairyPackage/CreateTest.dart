@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:driving_instructor/PupilPackage/API.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateTest extends StatefulWidget {
@@ -13,7 +16,6 @@ class _CreateTestState extends State<CreateTest> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _dateController = new TextEditingController();
-  TextEditingController _pupilIDController = new TextEditingController();
   TextEditingController _durationDaysController = new TextEditingController();
   TextEditingController _pupilPostCodeController = new TextEditingController();
   TextEditingController _pupilAddressController = new TextEditingController();
@@ -28,6 +30,10 @@ class _CreateTestState extends State<CreateTest> {
 
   List<DropdownMenuItem<String>> _dropDownMenuStatusItems;
   String _stat;
+
+  String pupilItemstr;
+
+  API api = new API();
   @override
   void initState() {
     _dropDownMenuStatusItems = getDropDownStatusMenuItems();
@@ -102,6 +108,8 @@ class _CreateTestState extends State<CreateTest> {
     );
   }
 
+  final dateFormat = DateFormat("dd/MM/yyyy");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,21 +128,46 @@ class _CreateTestState extends State<CreateTest> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
                         ),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: "Pupil ID",
-                            hintText: "Pupil ID",
-                            hintStyle: TextStyle(fontSize: 18),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                          ),
-                          controller: _pupilIDController,
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "Pupil ID field should not be empty";
+                        FutureBuilder(
+                          future: api.fetchMsg(
+                              "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
+                          builder: (context, snap) {
+                            if (snap.hasData) {
+                              List<DropdownMenuItem<String>> items = new List();
+
+                              for (int i = 0; i < snap.data.length; i++) {
+                                String pupil = snap.data[i]["username"];
+                                String pupilID = snap.data[i]["id"];
+                                // here we are creating the drop down menu items, you can customize the item right here
+                                // but I'll just use a simple text for this
+                                items.add(new DropdownMenuItem(
+                                    value: pupilID, child: new Text(pupil)));
+                              }
+                              pupilItemstr = items[0].value;
+                              void changedDropDownPupilItem(
+                                  String selectedCity) {
+                                print(
+                                    "Selected city $selectedCity, we are going to refresh the UI");
+                                setState(() {
+                                  pupilItemstr = selectedCity;
+                                });
+                              }
+
+                              return ListTile(
+                                title: Text(
+                                  "Pupil ID",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                subtitle: new DropdownButton(
+                                  value: pupilItemstr,
+                                  items: items,
+                                  onChanged: changedDropDownPupilItem,
+                                ),
+                              );
                             }
-                            return null;
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
                           },
                         ),
                         SizedBox(
@@ -159,22 +192,24 @@ class _CreateTestState extends State<CreateTest> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
                         ),
-                        TextFormField(
-                          keyboardType: TextInputType.datetime,
-                          decoration: InputDecoration(
-                            labelText: "Date",
-                            hintText: "1/2/2019",
-                            hintStyle: TextStyle(fontSize: 18),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                          ),
+                        DateTimeField(
+                          format: dateFormat,
                           controller: _dateController,
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "Date field should not be empty";
-                            }
-                            return null;
+                          onShowPicker: (context, currentValue) {
+                            return showDatePicker(
+                                context: context,
+                                firstDate: DateTime(1900),
+                                initialDate: currentValue ?? DateTime.now(),
+                                lastDate: DateTime(2100));
                           },
+                          decoration: InputDecoration(
+                              labelText: 'Date',
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15))),
+                          /* onChanged: (dt) => setState(() {
+                            date = "$dt";
+                            print(dt);
+                          }),*/
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
@@ -388,9 +423,9 @@ class _CreateTestState extends State<CreateTest> {
 
     if (formState.validate()) {
       await createLesson(url, body: {
-        "pupil_id": _pupilIDController.text,
+        "pupil_id": pupilItemstr,
         "start": _startController.text,
-        "date": _dateController.text,
+        "date": _dateController.text.substring(0, 9),
         "duration": _durationDaysController.text,
         "pupil_postcode": _pupilPostCodeController.text,
         "pupil_address": _pupilAddressController.text,

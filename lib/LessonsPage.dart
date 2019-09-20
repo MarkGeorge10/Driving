@@ -19,7 +19,7 @@ class _LessonsPageState extends State<LessonsPage> {
     try {
       return http.post(url).then((http.Response response) async {
         final String responseBody = response.body;
-        lessonItem = json.decode(responseBody)["results"];
+        lessonItem = json.decode(responseBody)["bookings"];
         print(lessonItem.length);
 
         return lessonItem;
@@ -35,54 +35,11 @@ class _LessonsPageState extends State<LessonsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(5.0),
-              ),
-            ),
-            child: TextField(
-              style: TextStyle(
-                fontSize: 15.0,
-                color: Colors.black,
-              ),
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(10.0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                hintText: "Search..",
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.black,
-                ),
-                suffixIcon: Icon(
-                  Icons.filter_list,
-                  color: Colors.black,
-                ),
-                hintStyle: TextStyle(
-                  fontSize: 15.0,
-                  color: Colors.black,
-                ),
-              ),
-              maxLines: 1,
-              controller: _searchControl,
-            ),
-          ),
+          title: Text("View Booking"),
         ),
         body: FutureBuilder(
             future: fetchLessons(
-                "https://drivinginstructorsdiary.com/app/api/getLessonTypeApi?pageLimit=100"),
+                "https://drivinginstructorsdiary.com/app/api/viewBookingApi?instructor_id=1054"),
             builder: (context, snap) {
               if (snap.hasData) {
                 return ListView.builder(
@@ -91,14 +48,61 @@ class _LessonsPageState extends State<LessonsPage> {
                       return Card(
                         elevation: 10.0,
                         child: ListTile(
-                          leading: Container(
-                            child: Icon(
-                              Icons.drive_eta,
-                              color: Colors.green,
-                              size: 50.0,
-                            ),
+                          title: Column(
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    "Type:",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(snap.data[index]["type"]),
+                                ],
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    "Start:",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(snap.data[index]["start_datetime"]),
+                                ],
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    "End:",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(snap.data[index]["end_datetime"]),
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 40,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          title: Text(snap.data[index]["text"]),
+                          subtitle: Row(
+                            children: <Widget>[
+                              Text(
+                                "Memo: ",
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              Text(snap.data[index]["memo"] == null
+                                  ? "No memo added"
+                                  : snap.data[index]["memo"]),
+                            ],
+                          ),
                           //subtitle: Text("Email"),
                         ),
                       );

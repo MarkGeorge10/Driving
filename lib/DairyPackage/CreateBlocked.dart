@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateBlocked extends StatefulWidget {
@@ -11,7 +13,6 @@ class CreateBlocked extends StatefulWidget {
 
 class _CreateBlockedState extends State<CreateBlocked> {
   final _formKey = GlobalKey<FormState>();
-
   TextEditingController _dateController = new TextEditingController();
   TextEditingController _durationDaysController = new TextEditingController();
   TextEditingController _reasonController = new TextEditingController();
@@ -19,12 +20,12 @@ class _CreateBlockedState extends State<CreateBlocked> {
 
   Future<void> createBlocked(String url, {Map body}) async {
     print("mark");
-    print(url);
+    print(body);
 
     try {
       return http.post(url, body: body).then((http.Response response) async {
         final String responseBody = response.body;
-        String jsondecode = json.decode(responseBody)["result"];
+        String jsondecode = json.decode(responseBody)['message'];
         print(jsondecode);
         _showDialog(jsondecode);
       });
@@ -65,6 +66,8 @@ class _CreateBlockedState extends State<CreateBlocked> {
     );
   }
 
+  final dateFormat = DateFormat("dd/MM/yyyy");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,22 +86,24 @@ class _CreateBlockedState extends State<CreateBlocked> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
                         ),
-                        TextFormField(
-                          keyboardType: TextInputType.datetime,
-                          decoration: InputDecoration(
-                            labelText: "Date",
-                            hintText: "1/2/2019",
-                            hintStyle: TextStyle(fontSize: 18),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                          ),
+                        DateTimeField(
+                          format: dateFormat,
                           controller: _dateController,
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "Date field should not be empty";
-                            }
-                            return null;
+                          onShowPicker: (context, currentValue) {
+                            return showDatePicker(
+                                context: context,
+                                firstDate: DateTime(1900),
+                                initialDate: currentValue ?? DateTime.now(),
+                                lastDate: DateTime(2100));
                           },
+                          decoration: InputDecoration(
+                              labelText: 'Date',
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15))),
+                          /* onChanged: (dt) => setState(() {
+                            date = "$dt";
+                            print(dt);
+                          }),*/
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
@@ -199,8 +204,8 @@ class _CreateBlockedState extends State<CreateBlocked> {
 
     if (formState.validate()) {
       await createBlocked(url, body: {
-        "date": _dateController.text,
-        "durationDays": _durationDaysController.text,
+        "date": _dateController.text.substring(0, 9),
+        "duration": _durationDaysController.text,
         "reason": _reasonController.text,
         "available": "false",
         "start": _startController.text,

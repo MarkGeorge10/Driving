@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'API.dart';
 import 'PupilDetailed.dart';
-import 'UpdatePupil.dart';
 
 class Pupils extends StatefulWidget {
   @override
@@ -13,6 +10,8 @@ class Pupils extends StatefulWidget {
 }
 
 class _PupilsState extends State<Pupils> {
+  API api = new API();
+
   Future<String> getID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var data = prefs.get("idPref");
@@ -20,32 +19,13 @@ class _PupilsState extends State<Pupils> {
     return data;
   }
 
-  List<dynamic> pupilItem;
-
-  Future<List<dynamic>> fetchMsg(String url) async {
-    //print(body);
-
-    try {
-      return http.post(url).then((http.Response response) async {
-        final String responseBody = response.body;
-        pupilItem = json.decode(responseBody)["data"]["data"];
-        print(pupilItem.length);
-
-        return pupilItem;
-      });
-    } catch (ex) {
-      //_showDialog("Something happened errored");
-    }
-    // _showDialog("Something happened errored");
-    return null;
-  }
-
   final TextEditingController _searchControl = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Container(
+          title: Text("Pupil Page"),
+          /*Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(
@@ -88,14 +68,14 @@ class _PupilsState extends State<Pupils> {
               maxLines: 1,
               controller: _searchControl,
             ),
-          ),
+          ),*/
         ),
         body: FutureBuilder(
           future: getID(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return FutureBuilder(
-                  future: fetchMsg(
+                  future: api.fetchMsg(
                       "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
                   builder: (context, snap) {
                     if (snap.hasData) {
@@ -115,13 +95,12 @@ class _PupilsState extends State<Pupils> {
                                               address: snap.data[index]
                                                   ["address"],
                                               phone: snap.data[index]["mobile"],
-                                              company: snap.data[index]
-                                                  ["company"],
                                               instructorName: snap.data[index]
                                                   ["instructor_name"],
                                               createdAt: snap.data[index]
                                                   ["created_at"],
-                                              id: snap.data[index]["id"],
+                                              postalCode: snap.data[index]
+                                                  ["postcode"],
                                             )));
                               },
                               child: Card(
@@ -135,7 +114,7 @@ class _PupilsState extends State<Pupils> {
                                   ),
                                   title: Text(snap.data[index]["username"]),
                                   subtitle: Text(snap.data[index]["mobile"]),
-                                  trailing: IconButton(
+                                  /* trailing: IconButton(
                                       icon: Icon(Icons.update),
                                       onPressed: () {
                                         Navigator.of(context).push(
@@ -143,7 +122,7 @@ class _PupilsState extends State<Pupils> {
                                                 builder: (context) =>
                                                     UpdatePupil(snap.data[index]
                                                         ["id"])));
-                                      }),
+                                      }),*/
                                 ),
                               ),
                             );

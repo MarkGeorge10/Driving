@@ -89,10 +89,12 @@ class _AddTransactionState extends State<AddTransaction> {
 
   List<DropdownMenuItem<String>> getDropDownMenuItems() {
     List<DropdownMenuItem<String>> items = new List();
-    for (String city in types) {
+    for (int i = 0; i < types.length; i++) {
+      String city = types[i];
+      String index = "${i + 1}";
       // here we are creating the drop down menu items, you can customize the item right here
       // but I'll just use a simple text for this
-      items.add(new DropdownMenuItem(value: city, child: new Text(city)));
+      items.add(new DropdownMenuItem(value: index, child: new Text(city)));
     }
 
     return items;
@@ -400,11 +402,10 @@ class _AddTransactionState extends State<AddTransaction> {
       await createTransaction(url, body: {
         "client_id": "4",
         "pupil_id": pupilItemstr,
-
         "date": _dateController.text.substring(0, 9),
         "amount": _amountController.text,
         "hours": _hoursController.text,
-        "type": "2", //_category.toString(),
+        "type": _category.toString(),
         "payment_method": _payment.toString(),
         "status": _stat.toString(),
         "note": _noteController.text

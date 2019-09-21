@@ -106,7 +106,7 @@ class _CreateLessonState extends State<CreateLesson> {
   }
 
   final dateFormat = DateFormat("dd/MM/yyyy");
-
+  final timeFormat = DateFormat("h:mm");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,21 +170,21 @@ class _CreateLessonState extends State<CreateLesson> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
                         ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: "start",
-                            hintText: "start",
-                            hintStyle: TextStyle(fontSize: 18),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                          ),
+                        DateTimeField(
                           controller: _startController,
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "start field should not be empty";
-                            }
-                            return null;
+                          format: timeFormat,
+                          onShowPicker: (context, currentValue) async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.fromDateTime(
+                                  currentValue ?? DateTime.now()),
+                            );
+                            return DateTimeField.convert(time);
                           },
+                          decoration: InputDecoration(
+                              labelText: 'Start',
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15))),
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
@@ -214,8 +214,8 @@ class _CreateLessonState extends State<CreateLesson> {
                         TextFormField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            labelText: "Duration Days",
-                            hintText: "Duration Days",
+                            labelText: "Duration in hrs",
+                            hintText: "Duration in hrs",
                             hintStyle: TextStyle(fontSize: 18),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15)),
@@ -223,7 +223,7 @@ class _CreateLessonState extends State<CreateLesson> {
                           controller: _durationDaysController,
                           validator: (input) {
                             if (input.isEmpty) {
-                              return "Duration Days field should not be empty";
+                              return "Duration field should not be empty";
                             }
                             return null;
                           },

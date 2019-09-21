@@ -12,7 +12,6 @@ import 'HomePage.dart';
 import 'LessonsPage.dart';
 import 'Message/AddMessage.dart';
 import 'Message/MessagesPage.dart';
-import 'PupilPackage/PupilDetailed.dart';
 import 'RegistrationForm/LoginPage.dart';
 import 'TransactionPackage/AddTransaction.dart';
 
@@ -65,7 +64,6 @@ class _MyAPPState extends State<MyAPP> {
         '/CalenderPage': (context) => CalenderPage(),
         '/LoginPage': (context) => LoginPage(),
         '/AddTransaction': (context) => AddTransaction(),
-        '/PupilDetailed': (context) => PupilDetailed(),
         '/AddMessage': (context) => AddMessage(),
         '/Choice': (context) => Choice(),
         '/CreateHoliday': (context) => CreateHoliday(),

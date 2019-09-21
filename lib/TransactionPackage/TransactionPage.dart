@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'UpdateTransaction.dart';
+
 class TransactionPage extends StatefulWidget {
   @override
   _TransactionPageState createState() => _TransactionPageState();
@@ -18,6 +20,7 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   List<dynamic> transactionItem;
+
   Future<List<dynamic>> fetchTransaction(String url) async {
     print(url);
 
@@ -179,13 +182,32 @@ class _TransactionPageState extends State<TransactionPage> {
                                   ),
                                 ],
                               )),
-                              trailing: IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {
-                                    deleteTransaction(
-                                        "https://drivinginstructorsdiary.com/app/api/deleteTransactionApi/" +
-                                            "${snap.data[index]["id"]}");
-                                  }),
+                              trailing: SingleChildScrollView(
+                                child: Column(
+                                  children: <Widget>[
+                                    IconButton(
+                                        icon: Icon(Icons.delete),
+                                        onPressed: () {
+                                          deleteTransaction(
+                                              "https://drivinginstructorsdiary.com/app/api/deleteTransactionApi/" +
+                                                  "${snap.data[index]["id"]}");
+                                        }),
+                                    Text(
+                                      "Swap down",
+                                      style: TextStyle(fontSize: 9.0),
+                                    ),
+                                    IconButton(
+                                        icon: Icon(Icons.update),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              new MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      UpdateTransaction(snap
+                                                          .data[index]["id"])));
+                                        }),
+                                  ],
+                                ),
+                              ),
                             ));
                       });
                 }

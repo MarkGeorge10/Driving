@@ -1,4 +1,3 @@
-import 'package:driving_instructor/PupilPackage/Pupil.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,6 +5,7 @@ import 'DairyPackage/Calender page.dart';
 import 'LessonsPage.dart';
 import 'Message/MessagesPage.dart';
 import 'ProgressReport.dart';
+import 'PupilPackage/MainPupil.dart';
 import 'RegistrationForm/LoginPage.dart';
 import 'TransactionPackage/TransactionPage.dart';
 
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<HomePage> {
         children: <Widget>[
           MessagePage(),
           CalenderPage(),
-          Pupils(),
+          MainPupil(),
           LessonsPage(),
           TransactionPage(),
           ReportPage()

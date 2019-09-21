@@ -7,12 +7,14 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AddTransaction extends StatefulWidget {
+class UpdateTransaction extends StatefulWidget {
+  String id;
+  UpdateTransaction(this.id);
   @override
-  _AddTransactionState createState() => _AddTransactionState();
+  _UpdateTransactionState createState() => _UpdateTransactionState();
 }
 
-class _AddTransactionState extends State<AddTransaction> {
+class _UpdateTransactionState extends State<UpdateTransaction> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _dateController = new TextEditingController();
@@ -143,7 +145,7 @@ class _AddTransactionState extends State<AddTransaction> {
     });
   }
 
-  Future<void> createTransaction(String url, {Map body}) async {
+  Future<void> updateTransaction(String url, {Map body}) async {
     print("mark");
     print(body);
 
@@ -194,7 +196,7 @@ class _AddTransactionState extends State<AddTransaction> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add new transaction"),
+        title: Text("Update Transaction"),
       ),
       body: SingleChildScrollView(
         child: FutureBuilder(
@@ -207,6 +209,47 @@ class _AddTransactionState extends State<AddTransaction> {
                   children: <Widget>[
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 40,
+                    ),
+                    FutureBuilder(
+                      future: api.fetchMsg(
+                          "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snap.data}"),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<DropdownMenuItem<String>> items = new List();
+
+                          for (int i = 0; i < snapshot.data.length; i++) {
+                            String pupil = snapshot.data[i]["username"];
+                            String pupilID = snapshot.data[i]["id"];
+                            // here we are creating the drop down menu items, you can customize the item right here
+                            // but I'll just use a simple text for this
+                            items.add(new DropdownMenuItem(
+                                value: pupilID, child: new Text(pupil)));
+                          }
+                          pupilItemstr = items[0].value;
+                          void changedDropDownPupilItem(String selectedCity) {
+                            print(
+                                "Selected city $selectedCity, we are going to refresh the UI");
+                            setState(() {
+                              pupilItemstr = selectedCity;
+                            });
+                          }
+
+                          return ListTile(
+                            title: Text(
+                              "Pupil ID",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: new DropdownButton(
+                              value: pupilItemstr,
+                              items: items,
+                              onChanged: changedDropDownPupilItem,
+                            ),
+                          );
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 40,
@@ -288,54 +331,9 @@ class _AddTransactionState extends State<AddTransaction> {
                         onChanged: changedDropDownItem,
                       ),
                     ),
-                    _category == "12" || _category == "13"
-                        ? FutureBuilder(
-                            future: api.fetchMsg(
-                                "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snap.data}"),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                List<DropdownMenuItem<String>> items =
-                                    new List();
-
-                                for (int i = 0; i < snapshot.data.length; i++) {
-                                  String pupil = snapshot.data[i]["username"];
-                                  String pupilID = snapshot.data[i]["id"];
-                                  // here we are creating the drop down menu items, you can customize the item right here
-                                  // but I'll just use a simple text for this
-                                  items.add(new DropdownMenuItem(
-                                      value: pupilID, child: new Text(pupil)));
-                                }
-                                pupilItemstr = items[0].value;
-                                void changedDropDownPupilItem(
-                                    String selectedCity) {
-                                  print(
-                                      "Selected city $selectedCity, we are going to refresh the UI");
-                                  setState(() {
-                                    pupilItemstr = selectedCity;
-                                  });
-                                }
-
-                                return ListTile(
-                                  title: Text(
-                                    "Pupil ID",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  subtitle: new DropdownButton(
-                                    value: pupilItemstr,
-                                    items: items,
-                                    onChanged: changedDropDownPupilItem,
-                                  ),
-                                );
-                              }
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          )
-                        : SizedBox(
-                            height: MediaQuery.of(context).size.height / 40,
-                          ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 40,
+                    ),
                     ListTile(
                       title: Text(
                         "Payment Method",
@@ -369,11 +367,11 @@ class _AddTransactionState extends State<AddTransaction> {
                           // TODO: implement validate function
 
                           validateForm(
-                              "https://drivinginstructorsdiary.com/app/api/insertTransactionApi?instructor_id=" +
-                                  "${snap.data}");
+                              "https://drivinginstructorsdiary.com/app/api/updateTransactionApi/" +
+                                  widget.id);
                         },
                         child: Text(
-                          "Add Transaction",
+                          "Update Transaction",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                         shape: StadiumBorder(),
@@ -403,7 +401,7 @@ class _AddTransactionState extends State<AddTransaction> {
     FormState formState = _formKey.currentState;
 
     if (formState.validate()) {
-      await createTransaction(url, body: {
+      await updateTransaction(url, body: {
         "client_id": "4",
         "pupil_id": pupilItemstr,
         "date": _dateController.text.substring(0, 9),

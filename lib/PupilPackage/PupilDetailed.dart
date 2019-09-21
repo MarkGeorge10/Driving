@@ -9,6 +9,7 @@ class PupilDetailed extends StatefulWidget {
       instructorName,
       email,
       postalCode,
+      houseNumbe,
       phone;
   PupilDetailed(
       {this.firstName,
@@ -18,6 +19,7 @@ class PupilDetailed extends StatefulWidget {
       this.phone,
       this.instructorName,
       this.createdAt,
+      this.houseNumbe,
       this.postalCode});
   @override
   _PupilDetailedState createState() => _PupilDetailedState();
@@ -34,21 +36,6 @@ class _PupilDetailedState extends State<PupilDetailed> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: <Widget>[
-              Expanded(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "Postal Code: ",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 17.0),
-                    ),
-                    Text(
-                      widget.postalCode,
-                      style: TextStyle(fontSize: 15.0),
-                    )
-                  ],
-                ),
-              ),
               Expanded(
                 child: Row(
                   children: <Widget>[
@@ -125,6 +112,36 @@ class _PupilDetailedState extends State<PupilDetailed> {
                         textWidthBasis: TextWidthBasis.parent,
                         style: TextStyle(fontSize: 15.0),
                       ),
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "Postal Code: ",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 17.0),
+                    ),
+                    Text(
+                      widget.postalCode,
+                      style: TextStyle(fontSize: 15.0),
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "House Number: ",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 17.0),
+                    ),
+                    Text(
+                      widget.houseNumbe,
+                      style: TextStyle(fontSize: 15.0),
                     )
                   ],
                 ),

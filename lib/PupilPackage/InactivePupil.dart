@@ -4,12 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'API.dart';
 import 'PupilDetailed.dart';
 
-class Pupils extends StatefulWidget {
+class InactivePupil extends StatefulWidget {
   @override
-  _PupilsState createState() => _PupilsState();
+  _InactivePupilState createState() => _InactivePupilState();
 }
 
-class _PupilsState extends State<Pupils> {
+class _InactivePupilState extends State<InactivePupil> {
   API api = new API();
 
   Future<String> getID() async {
@@ -28,7 +28,7 @@ class _PupilsState extends State<Pupils> {
         if (snapshot.hasData) {
           return FutureBuilder(
               future: api.fetchMsg(
-                  "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
+                  "https://drivinginstructorsdiary.com/app/api/viewPupilApi/inactive?instructor_id=${snapshot.data}"),
               builder: (context, snap) {
                 if (snap.hasData) {
                   return ListView.builder(

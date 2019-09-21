@@ -60,9 +60,22 @@ class _LessonsPageState extends State<LessonsPage> {
                                   Text(snap.data[index]["type"]),
                                 ],
                               ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height / 40,
-                              ),
+                              snap.data[index]["type"] == 'lesson'
+                                  ? Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Pupil Name:",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(snap.data[index]["pupil_text"]),
+                                      ],
+                                    )
+                                  : SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
                               Row(
                                 children: <Widget>[
                                   Text(

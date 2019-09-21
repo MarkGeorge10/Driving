@@ -77,13 +77,13 @@ class _CalenderPageState extends State<CalenderPage>
                   "1054"),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              final _selectedDay =
-                  DateTime.parse(snapshot.data[0]['start_datetime']);
-
+              DateTime _selectedDay;
               for (int i = 0; i < snapshot.data.length; i++) {
+                _selectedDay =
+                    DateTime.parse(snapshot.data[i]['start_datetime']);
                 _events = {
                   _selectedDay: [
-                    snapshot.data[0]['type'],
+                    snapshot.data[i]['type'],
                   ],
                 };
               }
@@ -92,8 +92,10 @@ class _CalenderPageState extends State<CalenderPage>
 
               void _onDaySelected(DateTime day, List events) {
                 print('CALLBACK: _onDaySelected');
+
                 setState(() {
                   _selectedEvents = events;
+                  _selectedDay = day;
                 });
               }
 

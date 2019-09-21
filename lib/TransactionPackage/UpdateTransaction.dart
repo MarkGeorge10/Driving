@@ -210,50 +210,6 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 40,
                     ),
-                    FutureBuilder(
-                      future: api.fetchMsg(
-                          "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snap.data}"),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<DropdownMenuItem<String>> items = new List();
-
-                          for (int i = 0; i < snapshot.data.length; i++) {
-                            String pupil = snapshot.data[i]["username"];
-                            String pupilID = snapshot.data[i]["id"];
-                            // here we are creating the drop down menu items, you can customize the item right here
-                            // but I'll just use a simple text for this
-                            items.add(new DropdownMenuItem(
-                                value: pupilID, child: new Text(pupil)));
-                          }
-                          pupilItemstr = items[0].value;
-                          void changedDropDownPupilItem(String selectedCity) {
-                            print(
-                                "Selected city $selectedCity, we are going to refresh the UI");
-                            setState(() {
-                              pupilItemstr = selectedCity;
-                            });
-                          }
-
-                          return ListTile(
-                            title: Text(
-                              "Pupil ID",
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            subtitle: new DropdownButton(
-                              value: pupilItemstr,
-                              items: items,
-                              onChanged: changedDropDownPupilItem,
-                            ),
-                          );
-                        }
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 40,
-                    ),
                     DateTimeField(
                       format: dateFormat,
                       controller: _dateController,
@@ -331,9 +287,54 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                         onChanged: changedDropDownItem,
                       ),
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 40,
-                    ),
+                    _category == "12" || _category == "13"
+                        ? FutureBuilder(
+                            future: api.fetchMsg(
+                                "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snap.data}"),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                List<DropdownMenuItem<String>> items =
+                                    new List();
+
+                                for (int i = 0; i < snapshot.data.length; i++) {
+                                  String pupil = snapshot.data[i]["username"];
+                                  String pupilID = snapshot.data[i]["id"];
+                                  // here we are creating the drop down menu items, you can customize the item right here
+                                  // but I'll just use a simple text for this
+                                  items.add(new DropdownMenuItem(
+                                      value: pupilID, child: new Text(pupil)));
+                                }
+                                pupilItemstr = items[0].value;
+                                void changedDropDownPupilItem(
+                                    String selectedCity) {
+                                  print(
+                                      "Selected city $selectedCity, we are going to refresh the UI");
+                                  setState(() {
+                                    pupilItemstr = selectedCity;
+                                  });
+                                }
+
+                                return ListTile(
+                                  title: Text(
+                                    "Pupil ID",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  subtitle: new DropdownButton(
+                                    value: pupilItemstr,
+                                    items: items,
+                                    onChanged: changedDropDownPupilItem,
+                                  ),
+                                );
+                              }
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          )
+                        : SizedBox(
+                            height: MediaQuery.of(context).size.height / 40,
+                          ),
                     ListTile(
                       title: Text(
                         "Payment Method",

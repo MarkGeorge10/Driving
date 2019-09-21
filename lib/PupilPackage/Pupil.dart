@@ -61,7 +61,11 @@ class _PupilsState extends State<Pupils> {
                               ),
                               title: Column(
                                 children: <Widget>[
-                                  Text(snap.data[index]["email"]),
+                                  Text(
+                                    snap.data[index]["first_name"] +
+                                        " " +
+                                        snap.data[index]["last_name"],
+                                  ),
                                   SizedBox(
                                     height:
                                         MediaQuery.of(context).size.height / 60,

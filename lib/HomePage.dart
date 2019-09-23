@@ -5,6 +5,7 @@ import 'DairyPackage/Calender page.dart';
 import 'LessonsPage.dart';
 import 'Message/MessagesPage.dart';
 import 'ProgressReport.dart';
+import 'PupilPackage/API.dart';
 import 'PupilPackage/MainPupil.dart';
 import 'RegistrationForm/LoginPage.dart';
 import 'TransactionPackage/TransactionPage.dart';
@@ -59,6 +60,7 @@ class _MyHomePageState extends State<HomePage> {
   }
 
   // ignore: non_constant_identifier_names, missing_return
+  API api = new API();
 
   @override
   Widget build(BuildContext context) {
@@ -82,14 +84,38 @@ class _MyHomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             SizedBox(width: 7),
-            IconButton(
-              icon: Icon(
-                Icons.message,
-                size: 24.0,
-              ),
-              color: _page == 0 ? Colors.white : Colors.white,
-              onPressed: () => _pageController.jumpToPage(0),
-            ),
+            FutureBuilder(
+                future: api.getID(),
+                builder: (context, snapshot) {
+                  return Stack(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                          Icons.message,
+                          size: 24.0,
+                        ),
+                        color: _page == 0 ? Colors.white : Colors.white,
+                        onPressed: () async {
+                          _pageController.jumpToPage(0);
+                        },
+                      ),
+                      FutureBuilder(
+                          future: api.fetchMsg(
+                              "https://drivinginstructorsdiary.com/app/api/viewMessageApi?instructor_id=" +
+                                  "${snapshot.data}"),
+                          builder: (context, snap) {
+                            return Positioned(
+                              left: 16.0,
+                              child: Icon(
+                                Icons.brightness_1,
+                                color: Colors.red,
+                                size: 10.0,
+                              ),
+                            );
+                          })
+                    ],
+                  );
+                }),
             IconButton(
               icon: Icon(
                 Icons.calendar_today,

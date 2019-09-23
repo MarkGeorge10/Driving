@@ -27,7 +27,7 @@ class _InactivePupilState extends State<InactivePupil> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return FutureBuilder(
-              future: api.fetchMsg(
+              future: api.fetchPupil(
                   "https://drivinginstructorsdiary.com/app/api/viewPupilApi/inactive?instructor_id=${snapshot.data}"),
               builder: (context, snap) {
                 if (snap.hasData) {

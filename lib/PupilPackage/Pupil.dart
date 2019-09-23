@@ -27,7 +27,7 @@ class _PupilsState extends State<Pupils> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return FutureBuilder(
-              future: api.fetchMsg(
+              future: api.fetchPupil(
                   "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
               builder: (context, snap) {
                 if (snap.hasData) {

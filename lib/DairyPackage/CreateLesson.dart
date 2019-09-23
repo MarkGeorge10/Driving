@@ -26,6 +26,34 @@ class _CreateLessonState extends State<CreateLesson> {
   TextEditingController _startController = new TextEditingController();
   List status = ["pending", "Delivered", "Cancelled"];
 
+  List duration = [
+    "1",
+    "1.5",
+    "2",
+    "2.5",
+    "3",
+    "3.5",
+    "4",
+    "4.5",
+    "5",
+    "5.5",
+    "6",
+    "7",
+    "7.5",
+    "8",
+    "8.5",
+    "9",
+    "9.5",
+    "10",
+    "10.5",
+    "11",
+    "11.5",
+    "12",
+  ];
+
+  List<DropdownMenuItem<String>> _dropDownMenuDurationItems;
+  String _duration;
+
   List<DropdownMenuItem<String>> _dropDownMenuStatusItems;
   String _stat;
   String pupilItemstr;
@@ -34,8 +62,10 @@ class _CreateLessonState extends State<CreateLesson> {
   @override
   void initState() {
     _dropDownMenuStatusItems = getDropDownStatusMenuItems();
+    _dropDownMenuDurationItems = getDropDownDurationMenuItems();
 
     _stat = _dropDownMenuStatusItems[0].value;
+    _duration = _dropDownMenuDurationItems[0].value;
     super.initState();
   }
 
@@ -48,6 +78,24 @@ class _CreateLessonState extends State<CreateLesson> {
     }
 
     return items;
+  }
+
+  List<DropdownMenuItem<String>> getDropDownDurationMenuItems() {
+    List<DropdownMenuItem<String>> items = new List();
+    for (String city in duration) {
+      // here we are creating the drop down menu items, you can customize the item right here
+      // but I'll just use a simple text for this
+      items.add(new DropdownMenuItem(value: city, child: new Text(city)));
+    }
+
+    return items;
+  }
+
+  void changedDropDownDurationItem(String selectedCity) {
+    print("Selected city $selectedCity, we are going to refresh the UI");
+    setState(() {
+      _duration = selectedCity;
+    });
   }
 
   void changedDropDownStatusItem(String selectedCity) {
@@ -211,22 +259,16 @@ class _CreateLessonState extends State<CreateLesson> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
                         ),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: "Duration in hrs",
-                            hintText: "Duration in hrs",
-                            hintStyle: TextStyle(fontSize: 18),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
+                        ListTile(
+                          title: Text(
+                            "Duration in Hrs",
+                            style: TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          controller: _durationDaysController,
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "Duration field should not be empty";
-                            }
-                            return null;
-                          },
+                          subtitle: new DropdownButton(
+                            value: _duration,
+                            items: _dropDownMenuDurationItems,
+                            onChanged: changedDropDownDurationItem,
+                          ),
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
@@ -384,7 +426,7 @@ class _CreateLessonState extends State<CreateLesson> {
         "pupil_id": pupilItemstr,
         "start": _startController.text,
         "date": _dateController.text.substring(0, 9),
-        "duration": _durationDaysController.text,
+        "duration": _duration,
         "repeat": _repeatController.text,
         "pupil_postcode": _pupilPostCodeController.text,
         "pupil_address": _pupilAddressController.text,

@@ -100,6 +100,21 @@ class _PupilDetailedState extends State<PupilDetailed> {
                 child: Row(
                   children: <Widget>[
                     Text(
+                      "House Number: ",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 17.0),
+                    ),
+                    Text(
+                      widget.houseNumbe,
+                      style: TextStyle(fontSize: 15.0),
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Row(
+                  children: <Widget>[
+                    Text(
                       "Address: ",
                       style: TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 17.0),
@@ -126,21 +141,6 @@ class _PupilDetailedState extends State<PupilDetailed> {
                     ),
                     Text(
                       widget.postalCode,
-                      style: TextStyle(fontSize: 15.0),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "House Number: ",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 17.0),
-                    ),
-                    Text(
-                      widget.houseNumbe,
                       style: TextStyle(fontSize: 15.0),
                     )
                   ],

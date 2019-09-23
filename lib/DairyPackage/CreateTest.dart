@@ -27,6 +27,33 @@ class _CreateTestState extends State<CreateTest> {
   TextEditingController _testTimeMinController = new TextEditingController();
 
   List status = ["pending", "Delivered", "Cancelled"];
+  List duration = [
+    "1",
+    "1.5",
+    "2",
+    "2.5",
+    "3",
+    "3.5",
+    "4",
+    "4.5",
+    "5",
+    "5.5",
+    "6",
+    "7",
+    "7.5",
+    "8",
+    "8.5",
+    "9",
+    "9.5",
+    "10",
+    "10.5",
+    "11",
+    "11.5",
+    "12",
+  ];
+
+  List<DropdownMenuItem<String>> _dropDownMenuDurationItems;
+  String _duration;
 
   List<DropdownMenuItem<String>> _dropDownMenuStatusItems;
   String _stat;
@@ -37,9 +64,29 @@ class _CreateTestState extends State<CreateTest> {
   @override
   void initState() {
     _dropDownMenuStatusItems = getDropDownStatusMenuItems();
+    _dropDownMenuDurationItems = getDropDownDurationMenuItems();
 
+    _duration = _dropDownMenuDurationItems[0].value;
     _stat = _dropDownMenuStatusItems[0].value;
     super.initState();
+  }
+
+  List<DropdownMenuItem<String>> getDropDownDurationMenuItems() {
+    List<DropdownMenuItem<String>> items = new List();
+    for (String city in duration) {
+      // here we are creating the drop down menu items, you can customize the item right here
+      // but I'll just use a simple text for this
+      items.add(new DropdownMenuItem(value: city, child: new Text(city)));
+    }
+
+    return items;
+  }
+
+  void changedDropDownDurationItem(String selectedCity) {
+    print("Selected city $selectedCity, we are going to refresh the UI");
+    setState(() {
+      _duration = selectedCity;
+    });
   }
 
   List<DropdownMenuItem<String>> getDropDownStatusMenuItems() {
@@ -215,22 +262,16 @@ class _CreateTestState extends State<CreateTest> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,
                         ),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            labelText: "Duration in hrs",
-                            hintText: "Duration in hrs",
-                            hintStyle: TextStyle(fontSize: 18),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
+                        ListTile(
+                          title: Text(
+                            "Duration in Hrs",
+                            style: TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          controller: _durationDaysController,
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "start field should not be empty";
-                            }
-                            return null;
-                          },
+                          subtitle: new DropdownButton(
+                            value: _duration,
+                            items: _dropDownMenuDurationItems,
+                            onChanged: changedDropDownDurationItem,
+                          ),
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 40,

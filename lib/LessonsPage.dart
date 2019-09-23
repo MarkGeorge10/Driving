@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LessonsPage extends StatefulWidget {
@@ -36,6 +37,8 @@ class _LessonsPageState extends State<LessonsPage> {
     // _showDialog("Something happened errored");
     return null;
   }
+
+  final dateFormat = DateFormat("dd/MM/yyyy");
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +100,10 @@ class _LessonsPageState extends State<LessonsPage> {
                                               fontWeight: FontWeight.w600),
                                         ),
                                         Text(
-                                            snap.data[index]["start_datetime"]),
+                                          snap.data[index]["start_datetime"]
+                                              .replaceAll(
+                                                  new RegExp(r'-'), '/'),
+                                        ),
                                       ],
                                     ),
                                     SizedBox(
@@ -112,7 +118,11 @@ class _LessonsPageState extends State<LessonsPage> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600),
                                         ),
-                                        Text(snap.data[index]["end_datetime"]),
+                                        Text(
+                                          snap.data[index]["end_datetime"]
+                                              .replaceAll(
+                                                  new RegExp(r'-'), '/'),
+                                        ),
                                         SizedBox(
                                           height: MediaQuery.of(context)
                                                   .size

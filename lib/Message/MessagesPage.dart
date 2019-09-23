@@ -1,8 +1,5 @@
-import 'dart:convert';
-
+import 'package:driving_instructor/PupilPackage/API.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'DetailedMsg.dart';
 
@@ -12,32 +9,7 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
-  List<dynamic> msgItem;
-
-  Future<String> getID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var dat = prefs.get("idPref");
-
-    return dat;
-  }
-
-  Future<List<dynamic>> fetchMsg(String url) async {
-    print(url);
-
-    try {
-      return http.post(url).then((http.Response response) async {
-        final String responseBody = response.body;
-        msgItem = json.decode(responseBody)["data"]["data"];
-        print(msgItem.length);
-
-        return msgItem;
-      });
-    } catch (ex) {
-      //_showDialog("Something happened errored");
-    }
-    // _showDialog("Something happened errored");
-    return null;
-  }
+  API api = new API();
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +18,11 @@ class _MessagePageState extends State<MessagePage> {
         title: Text("Message Page"),
       ),
       body: FutureBuilder(
-          future: getID(),
+          future: api.getID(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return FutureBuilder(
-                  future: fetchMsg(
+                  future: api.fetchMsg(
                       "https://drivinginstructorsdiary.com/app/api/viewMessageApi?instructor_id=" +
                           "${snapshot.data}"),
                   builder: (context, snap) {
@@ -83,7 +55,7 @@ class _MessagePageState extends State<MessagePage> {
                                                 ["receiver_sender_name"] ==
                                             ""
                                         ? "Sender Name"
-                                        : msgItem[position]
+                                        : api.msgItem[position]
                                             ["receiver_sender_name"],
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,

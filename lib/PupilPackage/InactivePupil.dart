@@ -49,7 +49,7 @@ class _InactivePupilState extends State<InactivePupil> {
                                               email: snap.data[index]["email"],
                                               address: snap.data[index]
                                                   ["address"],
-                                              phone: snap.data[index]["mobile"],
+                                              phone: snap.data[index]["phone"],
                                               instructorName: snap.data[index]
                                                   ["instructor_name"],
                                               createdAt: snap.data[index]
@@ -78,7 +78,7 @@ class _InactivePupilState extends State<InactivePupil> {
                                                   null ||
                                               snap.data[index]["last_name"] ==
                                                   ""
-                                          ? ""
+                                          ? Text(" ")
                                           : Text(
                                               snap.data[index]["first_name"] +
                                                   " " +
@@ -91,7 +91,7 @@ class _InactivePupilState extends State<InactivePupil> {
                                       ),
                                       snap.data[index]["address"] == null ||
                                               snap.data[index]["address"] == ""
-                                          ? ""
+                                          ? Text(" ")
                                           : Text(snap.data[index]["address"]),
                                       SizedBox(
                                         height:
@@ -100,7 +100,7 @@ class _InactivePupilState extends State<InactivePupil> {
                                       ),
                                       snap.data[index]["mobile"] == null ||
                                               snap.data[index]["mobile"] == ""
-                                          ? ""
+                                          ? Text(" ")
                                           : Text(snap.data[index]["mobile"]),
                                     ],
                                   ),

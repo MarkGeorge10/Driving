@@ -14,7 +14,7 @@ class API {
       return http.post(url).then((http.Response response) async {
         final String responseBody = response.body;
         pupilItem = json.decode(responseBody)["data"]["data"];
-        print(pupilItem.length);
+        print(pupilItem);
 
         return pupilItem;
       });

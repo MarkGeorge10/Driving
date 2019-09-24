@@ -61,21 +61,34 @@ class _InactivePupilState extends State<InactivePupil> {
                               ),
                               title: Column(
                                 children: <Widget>[
-                                  Text(
-                                    snap.data[index]["first_name"] +
-                                        " " +
-                                        snap.data[index]["last_name"],
-                                  ),
+                                  snap.data[index]["first_name"] == null ||
+                                          snap.data[index]["first_name"] ==
+                                              "" ||
+                                          snap.data[index]["last_name"] ==
+                                              null ||
+                                          snap.data[index]["last_name"] == ""
+                                      ? ""
+                                      : Text(
+                                          snap.data[index]["first_name"] +
+                                              " " +
+                                              snap.data[index]["last_name"],
+                                        ),
                                   SizedBox(
                                     height:
                                         MediaQuery.of(context).size.height / 60,
                                   ),
-                                  Text(snap.data[index]["address"]),
+                                  snap.data[index]["address"] == null ||
+                                          snap.data[index]["address"] == ""
+                                      ? ""
+                                      : Text(snap.data[index]["address"]),
                                   SizedBox(
                                     height:
                                         MediaQuery.of(context).size.height / 60,
                                   ),
-                                  Text(snap.data[index]["mobile"]),
+                                  snap.data[index]["mobile"] == null ||
+                                          snap.data[index]["mobile"] == ""
+                                      ? ""
+                                      : Text(snap.data[index]["mobile"]),
                                 ],
                               ),
 

@@ -30,6 +30,7 @@ dependencies:
   flutter_widget_from_html: 0.2.2+1
   datetime_picker_formfield:
   calendar_view_widget:
+  flutter_local_notifications: ^0.8.3
   intl:
 
 

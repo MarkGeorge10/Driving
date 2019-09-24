@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LessonsPage extends StatefulWidget {
@@ -38,8 +37,6 @@ class _LessonsPageState extends State<LessonsPage> {
     return null;
   }
 
-  final dateFormat = DateFormat("dd/MM/yyyy");
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,6 +61,9 @@ class _LessonsPageState extends State<LessonsPage> {
 
                             String endDate = snap.data[index]["end_datetime"]
                                 .replaceAll(new RegExp(r'-'), '/');
+
+                            List<String> startList = startDate.split('/');
+                            List<String> endList = endDate.split('/');
                             return Card(
                               elevation: 10.0,
                               child: ListTile(
@@ -105,9 +105,13 @@ class _LessonsPageState extends State<LessonsPage> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600),
                                         ),
-                                        Text(
-                                          startDate.substring(0, 9),
-                                        ),
+                                        Text(startList[2].substring(0, 2) +
+                                                '/' +
+                                                startList[1] +
+                                                '/' +
+                                                startList[0]
+                                            //startDate.substring(0, 9),
+                                            ),
                                       ],
                                     ),
                                     SizedBox(
@@ -122,7 +126,11 @@ class _LessonsPageState extends State<LessonsPage> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600),
                                         ),
-                                        Text(endDate.substring(0, 9)),
+                                        Text(endList[2].substring(0, 2) +
+                                            '/' +
+                                            endList[1] +
+                                            '/' +
+                                            endList[0]),
                                         SizedBox(
                                           height: MediaQuery.of(context)
                                                   .size

@@ -1,46 +1,57 @@
 import 'package:flutter/material.dart';
 
-import 'InactivePupil.dart';
-import 'Pupil.dart';
-
 class MainPupil extends StatefulWidget {
   @override
   _MainPupilState createState() => _MainPupilState();
 }
 
 class _MainPupilState extends State<MainPupil> {
-  final List<Tab> myTabs = <Tab>[
-    Tab(text: 'Active Pupil'),
-    Tab(text: 'Inactive Pupil'),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: myTabs.length,
-      child: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          elevation: 20.0,
-          title: Text("Pupil Page"),
-          centerTitle: true,
-          bottom: TabBar(
-            tabs: myTabs,
+    return Scaffold(
+      body: ListView(
+        children: <Widget>[
+          Center(
+            child: Column(
+              children: <Widget>[
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/ActivePupils');
+                  },
+                  child: ListTile(
+                    // leading: Icon(items[index]["icons"]),
+                    leading: Icon(
+                      Icons.brightness_1,
+                      color: Colors.green,
+                    ),
+                    title: Center(
+                      child: Text("Active Pupil"),
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: Colors.green,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/InactivePupils');
+                  },
+                  child: ListTile(
+                    // leading: Icon(items[index]["icons"]),
+                    leading: Icon(
+                      Icons.brightness_1,
+                      color: Colors.grey,
+                    ),
+                    title: Center(
+                      child: Text("Inactive Pupil"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        body: TabBarView(
-          children: myTabs.map((Tab tab) {
-            return buildNavPage(tab.text, context);
-          }).toList(),
-        ),
+        ],
       ),
     );
-  }
-
-  Widget buildNavPage(String text, BuildContext context) {
-    if (text == "Active Pupil") {
-      return Pupils();
-    }
-    return InactivePupil();
   }
 }

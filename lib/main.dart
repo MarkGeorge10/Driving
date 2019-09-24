@@ -12,6 +12,7 @@ import 'HomePage.dart';
 import 'LessonsPage.dart';
 import 'Message/AddMessage.dart';
 import 'Message/MessagesPage.dart';
+import 'PupilPackage/InactivePupil.dart';
 import 'RegistrationForm/LoginPage.dart';
 import 'TransactionPackage/AddTransaction.dart';
 
@@ -70,6 +71,8 @@ class _MyAPPState extends State<MyAPP> {
         '/CreateBlocked': (context) => CreateBlocked(),
         '/CreateLesson': (context) => CreateLesson(),
         '/CreateTest': (context) => CreateTest(),
+        '/ActivePupils': (context) => Pupils(),
+        '/InactivePupils': (context) => InactivePupil(),
       },
     );
   }

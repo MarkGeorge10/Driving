@@ -113,8 +113,16 @@ class _CalenderPageState extends State<CalenderPage>
                 for (int i = 0; i < snap.data.length; i++) {
                   eventsList.add(
                     {
-                      'name': snap.data[i]['type'],
-                      'location': null,
+                      'type': snap.data[i]['pupil_text'] == null ||
+                              snap.data[i]['pupil_text'] == ""
+                          ? snap.data[i]['type']
+                          : snap.data[i]['type'] +
+                              "\n" +
+                              snap.data[i]['pupil_text'],
+                      'reason': snap.data[i]['reason'] == null ||
+                              snap.data[i]['reason'] == ""
+                          ? ""
+                          : snap.data[i]['reason'],
                       'date': snap.data[i]['start_datetime'],
                       'id': snap.data[i]['id']
                     },
@@ -128,6 +136,11 @@ class _CalenderPageState extends State<CalenderPage>
                   appBar: new AppBar(
                     title: new Text("Calender Page"),
                   ),
+                  floatingActionButton: FloatingActionButton(
+                      child: Icon(Icons.add),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/Choice');
+                      }),
                   body: new Center(
                     // Center is a layout widget. It takes a single child and positions it
                     // in the middle of the parent.
@@ -137,10 +150,10 @@ class _CalenderPageState extends State<CalenderPage>
                         // default String parameter values used below as example
                         new CalendarView(
                           onEventTapped: onEventTapped,
-                          titleField: 'name',
-                          detailField: 'location',
+                          titleField: 'type',
+                          detailField: 'reason',
                           dateField: 'date',
-                          separatorTitle: 'Events',
+                          separatorTitle: 'Event',
                           theme: theme,
                           eventStream: eventsController.stream,
                         ),

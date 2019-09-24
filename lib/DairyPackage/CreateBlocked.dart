@@ -19,6 +19,7 @@ class _CreateBlockedState extends State<CreateBlocked> {
   TextEditingController _startController = new TextEditingController();
 
   List duration = [
+    "0.5",
     "1",
     "1.5",
     "2",

@@ -298,7 +298,10 @@ class _AddTransactionState extends State<AddTransaction> {
                                     new List();
 
                                 for (int i = 0; i < snapshot.data.length; i++) {
-                                  String pupil = snapshot.data[i]["username"];
+                                  String pupil = snapshot.data[i]
+                                          ["first_name"] +
+                                      " " +
+                                      snapshot.data[i]["last_name"];
                                   String pupilID = snapshot.data[i]["id"];
                                   // here we are creating the drop down menu items, you can customize the item right here
                                   // but I'll just use a simple text for this

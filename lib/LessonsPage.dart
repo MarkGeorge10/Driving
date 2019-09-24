@@ -58,6 +58,12 @@ class _LessonsPageState extends State<LessonsPage> {
                       return ListView.builder(
                           itemCount: snap.data.length,
                           itemBuilder: (context, index) {
+                            String startDate = snap.data[index]
+                                    ["start_datetime"]
+                                .replaceAll(new RegExp(r'-'), '/');
+
+                            String endDate = snap.data[index]["end_datetime"]
+                                .replaceAll(new RegExp(r'-'), '/');
                             return Card(
                               elevation: 10.0,
                               child: ListTile(
@@ -100,9 +106,7 @@ class _LessonsPageState extends State<LessonsPage> {
                                               fontWeight: FontWeight.w600),
                                         ),
                                         Text(
-                                          snap.data[index]["start_datetime"]
-                                              .replaceAll(
-                                                  new RegExp(r'-'), '/'),
+                                          startDate.substring(0, 9),
                                         ),
                                       ],
                                     ),
@@ -118,11 +122,7 @@ class _LessonsPageState extends State<LessonsPage> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600),
                                         ),
-                                        Text(
-                                          snap.data[index]["end_datetime"]
-                                              .replaceAll(
-                                                  new RegExp(r'-'), '/'),
-                                        ),
+                                        Text(endDate.substring(0, 9)),
                                         SizedBox(
                                           height: MediaQuery.of(context)
                                                   .size

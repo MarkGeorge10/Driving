@@ -29,6 +29,7 @@ dependencies:
   connectivity: 0.4.3+7
   flutter_widget_from_html: 0.2.2+1
   datetime_picker_formfield:
+  calendar_view_widget:
   intl:
 
 

@@ -1,17 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:calendar_view_widget/calendar_view_widget.dart';
+import 'package:driving_instructor/PupilPackage/API.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:table_calendar/table_calendar.dart';
-
-// Example holidays
-final Map<DateTime, List> _holidays = {
-  DateTime(2019, 1, 1): ['New Year\'s Day'],
-  DateTime(2019, 1, 6): ['Epiphany'],
-  DateTime(2019, 2, 14): ['Valentine\'s Day'],
-  DateTime(2019, 4, 21): ['Easter Sunday'],
-  DateTime(2019, 4, 22): ['Easter Monday'],
-};
 
 class CalenderPage extends StatefulWidget {
   CalenderPage({Key key, this.title}) : super(key: key);
@@ -24,6 +17,9 @@ class CalenderPage extends StatefulWidget {
 
 class _CalenderPageState extends State<CalenderPage>
     with TickerProviderStateMixin {
+  StreamController<List<Map<String, String>>> eventsController =
+      new StreamController();
+
   List<dynamic> bookingItems;
   Future<List<dynamic>> fetchBooking(String url) async {
     print(url);
@@ -46,124 +42,118 @@ class _CalenderPageState extends State<CalenderPage>
     return null;
   }
 
-  Map<DateTime, List> _events;
-  List _selectedEvents;
-  AnimationController _animationController;
-  CalendarController _calendarController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _calendarController = CalendarController();
-  }
-
   @override
   void dispose() {
-    _animationController.dispose();
-    _calendarController.dispose();
+    eventsController.close();
+    // TODO: implement dispose
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Calender Page"),
-      ),
-      body: FutureBuilder(
-          future: fetchBooking(
-              "https://drivinginstructorsdiary.com/app/api/viewBookingApi?instructor_id=" +
-                  "1054"),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              DateTime _selectedDay;
-              for (int i = 0; i < snapshot.data.length; i++) {
-                _selectedDay =
-                    DateTime.parse(snapshot.data[i]['start_datetime']);
-                _events = {
-                  _selectedDay: [
-                    snapshot.data[i]['type'],
-                  ],
-                };
-              }
+    final theme = ThemeData.dark().copyWith(
+      primaryColor: Colors.grey,
+      accentColor: Colors.lightGreen,
+      canvasColor: Colors.white,
+      backgroundColor: Colors.lightGreen,
+      dividerColor: Colors.green,
+      textTheme: ThemeData.dark().textTheme.copyWith(
+            display1: TextStyle(
+              fontSize: 21.0,
+            ),
+            subhead: TextStyle(
+              fontSize: 14.0,
+              color: Colors.green,
+            ),
+            headline: TextStyle(
+              fontSize: 18.0,
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+            title: TextStyle(
+              fontSize: 14.0,
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+      accentTextTheme: ThemeData.dark().accentTextTheme.copyWith(
+            body1: TextStyle(
+              fontSize: 14.0,
+              color: Colors.black,
+            ),
+            title: TextStyle(
+              fontSize: 21.0,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+            display1: TextStyle(
+              fontSize: 21.0,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+    );
 
-              _selectedEvents = _events[_selectedDay] ?? [];
+    void onEventTapped(Map<String, String> event) {
+      print(event);
+    }
 
-              void _onDaySelected(DateTime day, List events) {
-                print('CALLBACK: _onDaySelected');
+    API api = new API();
 
-                setState(() {
-                  _selectedEvents = events;
-                  _selectedDay = day;
-                });
-              }
+    return FutureBuilder(
+      future: api.getID(),
+      builder: (context, snapshot) {
+        return FutureBuilder(
+            future: fetchBooking(
+                "https://drivinginstructorsdiary.com/app/api/viewBookingApi?instructor_id=" +
+                    "${snapshot.data}"),
+            builder: (context, snap) {
+              if (snap.hasData) {
+                List<Map<String, String>> eventsList = [];
+                for (int i = 0; i < snap.data.length; i++) {
+                  eventsList.add(
+                    {
+                      'name': snap.data[i]['type'],
+                      'location': null,
+                      'date': snap.data[i]['start_datetime'],
+                      'id': snap.data[i]['id']
+                    },
+                  );
+                  eventsController.add(eventsList);
+                }
 
-              void _onVisibleDaysChanged(
-                  DateTime first, DateTime last, CalendarFormat format) {
-                print('CALLBACK: _onVisibleDaysChanged');
-              }
+                print(eventsController);
 
-              return Column(
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  // Switch out 2 lines below to play with TableCalendar's settings
-                  //-----------------------
-                  TableCalendar(
-                    calendarController: _calendarController,
-                    events: _events,
-                    onDaySelected: _onDaySelected,
-                    onVisibleDaysChanged: _onVisibleDaysChanged,
-                    initialCalendarFormat: CalendarFormat.month,
-                    // holidays: _holidays,
-                    startingDayOfWeek: StartingDayOfWeek.sunday,
-                    calendarStyle: CalendarStyle(
-                      selectedColor: Colors.deepOrange[400],
-                      todayColor: Colors.deepOrange[200],
-                      markersColor: Colors.brown[700],
-                      outsideDaysVisible: false,
-                    ),
-                    headerStyle: HeaderStyle(
-                      formatButtonTextStyle: TextStyle()
-                          .copyWith(color: Colors.white, fontSize: 15.0),
-                      formatButtonDecoration: BoxDecoration(
-                        color: Colors.deepOrange[400],
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
+                return new Scaffold(
+                  appBar: new AppBar(
+                    title: new Text("Calender Page"),
+                  ),
+                  body: new Center(
+                    // Center is a layout widget. It takes a single child and positions it
+                    // in the middle of the parent.
+                    child: new Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        // default String parameter values used below as example
+                        new CalendarView(
+                          onEventTapped: onEventTapped,
+                          titleField: 'name',
+                          detailField: 'location',
+                          dateField: 'date',
+                          separatorTitle: 'Events',
+                          theme: theme,
+                          eventStream: eventsController.stream,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8.0),
-                  Expanded(child: _buildEventList()),
-                ],
+                );
+              }
+              return Center(
+                child: CircularProgressIndicator(),
               );
-            }
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, '/Choice');
-          }),
+            });
+      },
     );
-  }
-
-  Widget _buildEventList() {
-    return ListView.builder(
-        itemCount: _selectedEvents.length,
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              border: Border.all(width: 0.8),
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: ListTile(
-              title: Text(_selectedEvents[index].toString()),
-              onTap: () => print('$_selectedEvents tapped!'),
-            ),
-          );
-        });
   }
 }

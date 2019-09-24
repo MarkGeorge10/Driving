@@ -107,7 +107,9 @@ class _AddMessageState extends State<AddMessage> {
                             List<DropdownMenuItem<String>> items = new List();
 
                             for (int i = 0; i < snap.data.length; i++) {
-                              String pupil = snap.data[i]["username"];
+                              String pupil = snap.data[i]["first_name"] +
+                                  " " +
+                                  snap.data[i]["last_name"];
                               String pupilID = snap.data[i]["id"];
                               // here we are creating the drop down menu items, you can customize the item right here
                               // but I'll just use a simple text for this
@@ -125,7 +127,7 @@ class _AddMessageState extends State<AddMessage> {
 
                             return ListTile(
                               title: Text(
-                                "Pupil ID",
+                                "Pupil Name",
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
                               subtitle: new DropdownButton(

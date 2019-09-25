@@ -36,6 +36,26 @@ class _DetailedMsgState extends State<DetailedMsg> {
     return null;
   }
 
+  Future<void> fetchDetailedMsg(String url, {Map body}) async {
+    print("mark");
+    print(body);
+
+    try {
+      return http.post(url, body: body).then((http.Response response) async {
+        final String responseBody = response.body;
+        String jsondecode = json.decode(responseBody)["result"];
+        print(json.decode(responseBody));
+        AlertDialog(
+          content: Text(jsondecode),
+        );
+      });
+    } catch (ex) {
+      print("Something happened errored");
+    }
+    print("Something happened errored");
+    return null;
+  }
+
   Future<String> getID() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var dat = prefs.get("idPref");

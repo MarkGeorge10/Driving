@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'API.dart';
 import 'PupilDetailed.dart';
+import 'UpdatePupil.dart';
 
 class Pupils extends StatefulWidget {
   @override
@@ -90,8 +91,7 @@ class _PupilsState extends State<Pupils> {
                                       Text(snap.data[index]["mobile"]),
                                     ],
                                   ),
-
-                                  /* trailing: IconButton(
+                                  trailing: IconButton(
                                       icon: Icon(Icons.update),
                                       onPressed: () {
                                         Navigator.of(context).push(
@@ -99,7 +99,7 @@ class _PupilsState extends State<Pupils> {
                                                 builder: (context) =>
                                                     UpdatePupil(snap.data[index]
                                                         ["id"])));
-                                      }),*/
+                                      }),
                                 ),
                               ),
                             );

@@ -18,7 +18,6 @@ class _CreateHolidayState extends State<CreateHoliday> {
   TextEditingController _durationDaysController = new TextEditingController();
   TextEditingController _reasonController = new TextEditingController();
   List duration = [
-    "0.5",
     "1",
     "1.5",
     "2",

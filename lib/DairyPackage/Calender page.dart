@@ -49,6 +49,90 @@ class _CalenderPageState extends State<CalenderPage>
     super.dispose();
   }
 
+  Future<void> createSignature(String url, {Map body}) async {
+    print("mark");
+    print(body);
+
+    try {
+      return http.post(url, body: body).then((http.Response response) async {
+        final String responseBody = response.body;
+        String jsondecode = json.decode(responseBody)["message"];
+        print(jsondecode);
+        print(jsondecode);
+      });
+    } catch (ex) {
+      _showDialog("Something happened errored");
+    }
+    _showDialog("Something happened errored");
+    return null;
+  }
+
+  void _showDialog(String bookingID) {
+    // flutter defined function
+    final _formKey = GlobalKey<FormState>();
+    TextEditingController _signature = new TextEditingController();
+
+    Future<void> validateForm(String url) async {
+      FormState formState = _formKey.currentState;
+
+      if (formState.validate()) {
+        await createSignature(url);
+        formState.reset();
+      }
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          //title: new Text("Alert Dialog title"),
+          content: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  controller: _signature,
+                  decoration: InputDecoration(
+                    labelText: "Your Signature",
+                    hintText: "Your Signature",
+                    hintStyle: TextStyle(fontSize: 18),
+                  ),
+                  validator: (input) {
+                    if (input.isEmpty) {
+                      return "Receiver Id can't be empty";
+                    }
+                    return null;
+                  },
+                ),
+                RaisedButton(
+                  onPressed: () {
+                    validateForm(
+                        "https://drivinginstructorsdiary.com/app/api/updateSignatureApi" +
+                            "?instructor_id=" +
+                            "$bookingID" +
+                            "signature=" +
+                            _signature.text);
+                  },
+                  child: Text("Reply on"),
+                )
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Done"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = ThemeData.dark().copyWith(
@@ -95,7 +179,11 @@ class _CalenderPageState extends State<CalenderPage>
     );
 
     void onEventTapped(Map<String, String> event) {
-      print(event);
+      if (event['type'].substring(0, 6) == 'lesson') {
+        _showDialog(event['id']);
+      }
+
+      print(event['type'].substring(0, 6));
     }
 
     API api = new API();

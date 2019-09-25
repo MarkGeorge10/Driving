@@ -67,16 +67,17 @@ class _CalenderPageState extends State<CalenderPage>
     return null;
   }
 
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _signature = new TextEditingController();
+
   void _showDialog(String bookingID) {
     // flutter defined function
-    final _formKey = GlobalKey<FormState>();
-    TextEditingController _signature = new TextEditingController();
 
     Future<void> validateForm(String url) async {
       FormState formState = _formKey.currentState;
 
       if (formState.validate()) {
-        await createSignature(url);
+        await createSignature(url, body: {'signature': _signature.text});
         formState.reset();
       }
     }
@@ -109,10 +110,9 @@ class _CalenderPageState extends State<CalenderPage>
                   onPressed: () {
                     validateForm(
                         "https://drivinginstructorsdiary.com/app/api/updateSignatureApi" +
-                            "?instructor_id=" +
-                            "$bookingID" +
-                            "signature=" +
-                            _signature.text);
+                            "?booking_id=" +
+                            "$bookingID");
+                    Navigator.of(context).pop();
                   },
                   child: Text("Reply on"),
                 )

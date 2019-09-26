@@ -17,8 +17,8 @@ class _ReportPageState extends State<ReportPage> {
     return dat;
   }
 
-  List<dynamic> transactionItem;
-  Future<List<dynamic>> fetchReport(String url) async {
+  Map<String, dynamic> transactionItem;
+  Future<void> fetchReport(String url) async {
     print(url);
 
     try {
@@ -26,10 +26,10 @@ class _ReportPageState extends State<ReportPage> {
         final String responseBody = response.body;
         transactionItem = json.decode(responseBody)["data"]["progress_report"];
 
-        print("mark");
-        print(transactionItem);
+        print("dddddd");
+        print("dddddd" + "$responseBody");
 
-        return transactionItem;
+        //return transactionItem;
       });
     } catch (ex) {
       //_showDialog("Something happened errored");
@@ -73,8 +73,7 @@ class _ReportPageState extends State<ReportPage> {
           if (snapshot.hasData) {
             return FutureBuilder(
               future: fetchReport(
-                  "https://drivinginstructorsdiary.com/app/api/progressReportApi/" +
-                      "${snapshot.data}"),
+                  "https://drivinginstructorsdiary.com/app/api/progressReportApi/1032"),
               builder: (context, snap) {
                 if (snap.hasData) {
                   return ListView.builder(
@@ -96,7 +95,7 @@ class _ReportPageState extends State<ReportPage> {
                                         color: Colors.black,
                                         fontWeight: FontWeight.w600),
                                   ),
-                                  Text(snap.data[index]["note"] == null
+                                  Text(snap.data[index]["_token"] == null
                                       ? "No Notes Added"
                                       : snap.data[index]["note"]),
                                 ],

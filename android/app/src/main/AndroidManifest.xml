@@ -17,7 +17,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="driving_instructor"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/image1 ">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

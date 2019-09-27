@@ -6,30 +6,57 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CreateHoliday extends StatefulWidget {
+class EditBlocked extends StatefulWidget {
+  String bookingID;
+  EditBlocked(this.bookingID);
   @override
-  _CreateHolidayState createState() => _CreateHolidayState();
+  _EditBlockedState createState() => _EditBlockedState();
 }
 
-class _CreateHolidayState extends State<CreateHoliday> {
+class _EditBlockedState extends State<EditBlocked> {
   final _formKey = GlobalKey<FormState>();
-
   TextEditingController _dateController = new TextEditingController();
   TextEditingController _durationDaysController = new TextEditingController();
   TextEditingController _reasonController = new TextEditingController();
-  List duration = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+  TextEditingController _startController = new TextEditingController();
+
+  List duration = [
+    "0.5",
+    "1",
+    "1.5",
+    "2",
+    "2.5",
+    "3",
+    "3.5",
+    "4",
+    "4.5",
+    "5",
+    "5.5",
+    "6",
+    "7",
+    "7.5",
+    "8",
+    "8.5",
+    "9",
+    "9.5",
+    "10",
+    "10.5",
+    "11",
+    "11.5",
+    "12",
+  ];
 
   List<DropdownMenuItem<String>> _dropDownMenuDurationItems;
   String _duration;
 
-  Future<void> createTransaction(String url, {Map body}) async {
+  Future<void> createBlocked(String url, {Map body}) async {
     print("mark");
     print(body);
 
     try {
       return http.post(url, body: body).then((http.Response response) async {
         final String responseBody = response.body;
-        String jsondecode = json.decode(responseBody)["message"];
+        String jsondecode = json.decode(responseBody)['message'];
         print(jsondecode);
         _showDialog(jsondecode);
       });
@@ -45,15 +72,6 @@ class _CreateHolidayState extends State<CreateHoliday> {
     var dat = prefs.get("idPref");
 
     return dat;
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _dropDownMenuDurationItems = getDropDownDurationMenuItems();
-
-    _duration = _dropDownMenuDurationItems[0].value;
   }
 
   void _showDialog(String str) {
@@ -79,7 +97,31 @@ class _CreateHolidayState extends State<CreateHoliday> {
     );
   }
 
-  final dateFormat = DateFormat("dd/MM/yyyy");
+  Future<void> deleteHoliday(String url, {Map body}) async {
+    print(url);
+
+    try {
+      return http.post(url, body: body).then((http.Response response) async {
+        final String responseBody = response.body;
+        String jsondecode = json.decode(responseBody)["data"];
+        print(jsondecode);
+        _showDialog(jsondecode);
+      });
+    } catch (ex) {
+      //_showDialog("Something happened errored");
+    }
+    // _showDialog("Something happened errored");
+    return null;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _dropDownMenuDurationItems = getDropDownDurationMenuItems();
+
+    _duration = _dropDownMenuDurationItems[0].value;
+  }
 
   List<DropdownMenuItem<String>> getDropDownDurationMenuItems() {
     List<DropdownMenuItem<String>> items = new List();
@@ -99,11 +141,13 @@ class _CreateHolidayState extends State<CreateHoliday> {
     });
   }
 
+  final dateFormat = DateFormat("dd/MM/yyyy");
+  final timeFormat = DateFormat("h:mm");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Holiday"),
+        title: Text("Edit Blocked"),
       ),
       body: FutureBuilder(
           future: getID(),
@@ -141,7 +185,7 @@ class _CreateHolidayState extends State<CreateHoliday> {
                         ),
                         ListTile(
                           title: Text(
-                            "Duration",
+                            "Duration in Hrs",
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                           subtitle: new DropdownButton(
@@ -169,31 +213,60 @@ class _CreateHolidayState extends State<CreateHoliday> {
                             return null;
                           },
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 20, bottom: 20),
-                          child: FlatButton(
-                            onPressed: () {
-                              // TODO: implement validate function
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 40,
+                        ),
+                        DateTimeField(
+                          controller: _startController,
+                          format: timeFormat,
+                          onShowPicker: (context, currentValue) async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.fromDateTime(
+                                  currentValue ?? DateTime.now()),
+                            );
+                            return DateTimeField.convert(time);
+                          },
+                          decoration: InputDecoration(
+                              labelText: 'Start',
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15))),
+                        ),
+                        Row(children: <Widget>[
+                          Expanded(
+                            child: FlatButton(
+                              onPressed: () {
+                                // TODO: implement validate function
 
-                              validateForm(
-                                  "https://drivinginstructorsdiary.com/app/api/createHolidayApi?instructor_id=" +
-                                      "${snapshot.data}");
-                            },
-                            child: Text(
-                              "Create Holiday",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
+                                validateForm(
+                                    "https://drivinginstructorsdiary.com/app/api/updateBlockedApi/" +
+                                        "${widget.bookingID}");
+                              },
+                              child: Text(
+                                "Update Blocked",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              color: Colors.blue,
                             ),
-                            shape: StadiumBorder(),
-                            color: Colors.green,
-                            splashColor: Colors.indigo,
-                            padding: EdgeInsets.fromLTRB(
-                                MediaQuery.of(context).size.width / 8,
-                                15,
-                                MediaQuery.of(context).size.width / 8,
-                                15),
                           ),
-                        )
+                          Expanded(
+                            child: FlatButton(
+                              onPressed: () {
+                                deleteHoliday(
+                                    "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
+                                        "${widget.bookingID}",
+                                    body: {
+                                      'instructor_id': snapshot.data,
+                                      'date': _dateController.text
+                                    });
+                              },
+                              child: Text("Delete blocked"),
+                              color: Colors.red,
+                            ),
+                          ),
+                        ])
                       ],
                     )),
               );
@@ -209,10 +282,12 @@ class _CreateHolidayState extends State<CreateHoliday> {
     FormState formState = _formKey.currentState;
 
     if (formState.validate()) {
-      await createTransaction(url, body: {
+      await createBlocked(url, body: {
         "date": _dateController.text.substring(0, 9),
-        "durationDays": _durationDaysController.text,
-        "reason": _reasonController.text
+        "duration": _durationDaysController.text,
+        "reason": _reasonController.text,
+        "available": "false",
+        "start": _startController.text,
       });
       formState.reset();
     }

@@ -49,4 +49,26 @@ class API {
 
     return dat;
   }
+
+  List<dynamic> bookingItems;
+  Future<List<dynamic>> fetchBooking(String url) async {
+    print(url);
+
+    try {
+      return http.post(url).then((http.Response response) async {
+        final String responseBody = response.body;
+        bookingItems = json.decode(responseBody)["bookings"];
+
+        print("mark");
+        print(bookingItems);
+
+        return bookingItems;
+      });
+    } catch (ex) {
+      //_showDialog("Something happened errored");
+    }
+    // _showDialog("Something happened errored");
+
+    return null;
+  }
 }

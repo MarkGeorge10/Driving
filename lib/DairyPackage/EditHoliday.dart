@@ -6,12 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CreateHoliday extends StatefulWidget {
+class EditHoliday extends StatefulWidget {
+  String bookingID;
+  EditHoliday(this.bookingID);
+
   @override
-  _CreateHolidayState createState() => _CreateHolidayState();
+  _EditHolidayState createState() => _EditHolidayState();
 }
 
-class _CreateHolidayState extends State<CreateHoliday> {
+class _EditHolidayState extends State<EditHoliday> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _dateController = new TextEditingController();
@@ -47,13 +50,21 @@ class _CreateHolidayState extends State<CreateHoliday> {
     return dat;
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _dropDownMenuDurationItems = getDropDownDurationMenuItems();
+  Future<void> deleteHoliday(String url, {Map body}) async {
+    print(url);
 
-    _duration = _dropDownMenuDurationItems[0].value;
+    try {
+      return http.post(url, body: body).then((http.Response response) async {
+        final String responseBody = response.body;
+        String jsondecode = json.decode(responseBody)["data"];
+        print(jsondecode);
+        _showDialog(jsondecode);
+      });
+    } catch (ex) {
+      //_showDialog("Something happened errored");
+    }
+    // _showDialog("Something happened errored");
+    return null;
   }
 
   void _showDialog(String str) {
@@ -77,6 +88,15 @@ class _CreateHolidayState extends State<CreateHoliday> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _dropDownMenuDurationItems = getDropDownDurationMenuItems();
+
+    _duration = _dropDownMenuDurationItems[0].value;
   }
 
   final dateFormat = DateFormat("dd/MM/yyyy");
@@ -103,7 +123,7 @@ class _CreateHolidayState extends State<CreateHoliday> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Holiday"),
+        title: Text("Edit Holiday"),
       ),
       body: FutureBuilder(
           future: getID(),
@@ -169,31 +189,41 @@ class _CreateHolidayState extends State<CreateHoliday> {
                             return null;
                           },
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 20, bottom: 20),
-                          child: FlatButton(
-                            onPressed: () {
-                              // TODO: implement validate function
+                        Row(children: <Widget>[
+                          Expanded(
+                            child: FlatButton(
+                              onPressed: () {
+                                // TODO: implement validate function
 
-                              validateForm(
-                                  "https://drivinginstructorsdiary.com/app/api/createHolidayApi?instructor_id=" +
-                                      "${snapshot.data}");
-                            },
-                            child: Text(
-                              "Create Holiday",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
+                                validateForm(
+                                    "https://drivinginstructorsdiary.com/app/api/updateHolidayApi/" +
+                                        "${widget.bookingID}");
+                              },
+                              child: Text(
+                                "Update holiday",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              color: Colors.blue,
                             ),
-                            shape: StadiumBorder(),
-                            color: Colors.green,
-                            splashColor: Colors.indigo,
-                            padding: EdgeInsets.fromLTRB(
-                                MediaQuery.of(context).size.width / 8,
-                                15,
-                                MediaQuery.of(context).size.width / 8,
-                                15),
                           ),
-                        )
+                          Expanded(
+                            child: FlatButton(
+                              onPressed: () {
+                                deleteHoliday(
+                                    "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
+                                        "${widget.bookingID}",
+                                    body: {
+                                      'instructor_id': snapshot.data,
+                                      'date': _dateController.text
+                                    });
+                              },
+                              child: Text("Delete holiday"),
+                              color: Colors.red,
+                            ),
+                          ),
+                        ])
                       ],
                     )),
               );

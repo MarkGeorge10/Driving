@@ -38,7 +38,7 @@ class _UpdatePupilState extends State<UpdatePupil> {
 
   Future<void> updatePupil(String url, {Map body}) async {
     print("mark");
-    print(body);
+    print(url);
 
     try {
       return http.post(url, body: body).then((http.Response response) async {

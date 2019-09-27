@@ -6,12 +6,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'DairyPackage/Choice.dart';
 import 'DairyPackage/CreateBlocked.dart';
 import 'DairyPackage/CreateHoliday.dart';
-import 'DairyPackage/CreateLessonimport 'Message/MessagesPage.dart';
+import 'DairyPackage/CreateLesson.dart';
+import 'DairyPackage/CreateTest.dart';
 import 'HomePage.dart';
+import 'LessonsPage.dart';
+import 'Message/AddMessage.dart';
 import 'Message/MessagesPage.dart';
 import 'PupilPackage/InactivePupil.dart';
 import 'RegistrationForm/LoginPage.dart';
 import 'TransactionPackage/AddTransaction.dart';
+
 
 void main() => runApp(MyAPP());
 

@@ -55,15 +55,33 @@ class _LessonsPageState extends State<LessonsPage> {
                       return ListView.builder(
                           itemCount: snap.data.length,
                           itemBuilder: (context, index) {
-                            String startDate = snap.data[index]
-                                    ["start_datetime"]
-                                .replaceAll(new RegExp(r'-'), '/');
+                            List<String> startList, endList;
+                            if (snap.data[index]["start_datetime"] == null ||
+                                snap.data[index]["end_datetime"] == null) {
+                              String startDate = "0000-00-00"
+                                  .replaceAll(new RegExp(r'-'), '/');
 
-                            String endDate = snap.data[index]["end_datetime"]
-                                .replaceAll(new RegExp(r'-'), '/');
+                              String endDate = "0000-00-00"
+                                  .replaceAll(new RegExp(r'-'), '/');
 
-                            List<String> startList = startDate.split('/');
-                            List<String> endList = endDate.split('/');
+                              print(snap.data[index]["end_datetime"]);
+
+                              startList = startDate.split('/');
+                              endList = endDate.split('/');
+                            } else {
+                              String startDate = snap.data[index]
+                                      ["start_datetime"]
+                                  .replaceAll(new RegExp(r'-'), '/');
+
+                              String endDate = snap.data[index]["end_datetime"]
+                                  .replaceAll(new RegExp(r'-'), '/');
+
+                              print(snap.data[index]["end_datetime"]);
+
+                              startList = startDate.split('/');
+                              endList = endDate.split('/');
+                            }
+
                             return Card(
                               elevation: 10.0,
                               child: ListTile(

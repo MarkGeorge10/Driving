@@ -102,136 +102,145 @@ class _CalenderPageState extends State<CalenderPage>
                       List<String> endList = endDate.split('/');
                       return AlertDialog(
                         //title: new Text("Alert Dialog title"),
-                        content: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Type:",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(snap.data[index]["type"]),
-                                ],
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height / 40,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Pupil Name:",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(snap.data[index]["pupil_text"]),
-                                ],
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height / 40,
-                              ),
-                              Text(
-                                "Address:",
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                snap.data[index]["p_u_address"],
-                                overflow: TextOverflow.visible,
-                                maxLines: 3,
-                                textWidthBasis: TextWidthBasis.parent,
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height / 40,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Door Number:",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(snap.data[index]["d_o_postcode"]),
-                                ],
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height / 40,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Postal Code :",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(snap.data[index]["p_u_postcode"]),
-                                ],
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height / 40,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Start:",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(startList[2].substring(0, 2) +
-                                          '/' +
-                                          startList[1] +
-                                          '/' +
-                                          startList[0]
-                                      //startDate.substring(0, 9),
-                                      ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height / 40,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    "End:",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(endList[2].substring(0, 2) +
-                                      '/' +
-                                      endList[1] +
-                                      '/' +
-                                      endList[0]),
-                                ],
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height / 40,
-                              ),
-                              TextFormField(
-                                controller: _signature,
-                                decoration: InputDecoration(
-                                  labelText: "Your Signature",
-                                  hintText: "Your Signature",
-                                  hintStyle: TextStyle(fontSize: 18),
+                        content: SingleChildScrollView(
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Type:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(snap.data[index]["type"]),
+                                  ],
                                 ),
-                                validator: (input) {
-                                  if (input.isEmpty) {
-                                    return "Receiver Id can't be empty";
-                                  }
-                                  return null;
-                                },
-                              ),
-                              RaisedButton(
-                                onPressed: () {
-                                  validateForm(
-                                      "https://drivinginstructorsdiary.com/app/api/updateSignatureApi" +
-                                          "?booking_id=" +
-                                          "$bookingID");
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text("Reply on"),
-                              )
-                            ],
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 40,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Pupil Name:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(snap.data[index]["pupil_text"]),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 40,
+                                ),
+                                Text(
+                                  "Address:",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  snap.data[index]["p_u_address"],
+                                  overflow: TextOverflow.visible,
+                                  maxLines: 3,
+                                  textWidthBasis: TextWidthBasis.parent,
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 40,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Door Number:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(snap.data[index]["d_o_postcode"]),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 40,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Postal Code :",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(snap.data[index]["p_u_postcode"]),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 40,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "Start:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(startList[2].substring(0, 2) +
+                                            '/' +
+                                            startList[1] +
+                                            '/' +
+                                            startList[0]
+                                        //startDate.substring(0, 9),
+                                        ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 40,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      "End:",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(endList[2].substring(0, 2) +
+                                        '/' +
+                                        endList[1] +
+                                        '/' +
+                                        endList[0]),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height / 40,
+                                ),
+                                TextFormField(
+                                  controller: _signature,
+                                  decoration: InputDecoration(
+                                    labelText: "Your Signature",
+                                    hintText: "Your Signature",
+                                    hintStyle: TextStyle(fontSize: 18),
+                                  ),
+                                  validator: (input) {
+                                    if (input.isEmpty) {
+                                      return "Receiver Id can't be empty";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                RaisedButton(
+                                  onPressed: () {
+                                    validateForm(
+                                        "https://drivinginstructorsdiary.com/app/api/updateSignatureApi" +
+                                            "?booking_id=" +
+                                            "$bookingID");
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Reply on"),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                         actions: <Widget>[

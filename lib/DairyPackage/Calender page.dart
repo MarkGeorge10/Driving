@@ -34,7 +34,7 @@ class _CalenderPageState extends State<CalenderPage>
   List<Map<String, String>> eventsList = [];
 
   bool check = false;
-
+  Color cInput;
   @override
   Widget build(BuildContext context) {
     void onEventTapped(Map<String, String> event) {
@@ -109,6 +109,17 @@ class _CalenderPageState extends State<CalenderPage>
 
                 if (check == false) {
                   for (int i = 0; i < snap.data.length; i++) {
+/*
+                    if (snap.data[i]['type'] == 'lesson') {
+                      cInput = const Color(0xFF37F7A4);
+                    } else if (snap.data[i]['type'] == 'holiday') {
+                      cInput = const Color(0xFFF2F584);
+                    } else if (snap.data[i]['type'] == 'blocked') {
+                      cInput = const Color(0xFFB8B8B4);
+                    } else if (snap.data[i]['type'] == 'test') {
+                      cInput = const Color(0xFF67F4F7);
+                    }*/
+
                     eventsList.add(
                       {
                         'type': snap.data[i]['pupil_text'] == null ||

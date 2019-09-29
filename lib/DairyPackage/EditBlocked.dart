@@ -147,43 +147,66 @@ class _EditBlockedState extends State<EditBlocked> {
 
   final dateFormat = DateFormat("dd/MM/yyyy");
   final timeFormat = DateFormat("h:mm");
-
+  final currentTime = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Edit Blocked"),
-        ),
-        body: FutureBuilder(
-            future: getID(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return
-                    //-------------------------------------------------------------------------------
-                    FutureBuilder(
-                        future: api.fetchBooking(
-                            "https://drivinginstructorsdiary.com/app/api/viewBookingApi?instructor_id=" +
-                                "${snapshot.data}"),
-                        builder: (context, snapViewBooking) {
-                          if (snapViewBooking.hasData) {
-                            _dateController.text = snapViewBooking
-                                .data[widget.parseindex]['start_datetime']
-                                .substring(0, 10);
+    return Material(
+      child: FutureBuilder(
+          future: getID(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return
+                  //-------------------------------------------------------------------------------
+                  FutureBuilder(
+                      future: api.fetchBooking(
+                          "https://drivinginstructorsdiary.com/app/api/viewBookingApi?instructor_id=" +
+                              "${snapshot.data}"),
+                      builder: (context, snapViewBooking) {
+                        if (snapViewBooking.hasData) {
+                          _dateController.text = snapViewBooking
+                              .data[widget.parseindex]['start_datetime']
+                              .substring(0, 10);
 
-                            _startController.text = snapViewBooking
-                                .data[widget.parseindex]['start_datetime']
-                                .substring(11, 16);
+                          _startController.text = snapViewBooking
+                              .data[widget.parseindex]['start_datetime']
+                              .substring(11, 16);
 
-                            _reasonController.text = snapViewBooking
-                                        .data[widget.parseindex]['reason'] ==
-                                    null
-                                ? ""
-                                : snapViewBooking.data[widget.parseindex]
-                                    ['reason'];
+                          _reasonController.text = snapViewBooking
+                                      .data[widget.parseindex]['reason'] ==
+                                  null
+                              ? ""
+                              : snapViewBooking.data[widget.parseindex]
+                                  ['reason'];
 
-                            _duration = snapViewBooking.data[widget.parseindex]
-                                ['duration'];
-                            return SingleChildScrollView(
+                          _duration = snapViewBooking.data[widget.parseindex]
+                              ['duration'];
+                          return Scaffold(
+                            appBar: AppBar(
+                              title: Text("Edit Blocked"),
+                              actions: <Widget>[
+                                Card(
+                                  color: currentTime.isBefore(DateTime.parse(
+                                          snapViewBooking
+                                                  .data[widget.parseindex]
+                                              ['end_datetime']))
+                                      ? Colors.white
+                                      : Colors.red,
+                                  margin: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width /
+                                          20),
+                                  child: Container(
+                                    child: Center(
+                                        child: currentTime.isBefore(
+                                                DateTime.parse(snapViewBooking
+                                                        .data[widget.parseindex]
+                                                    ['end_datetime']))
+                                            ? Text("Available")
+                                            : Text("Expired date")),
+                                  ),
+                                )
+                              ],
+                            ),
+                            body: SingleChildScrollView(
                                 child: Form(
                                     key: _formKey,
                                     child: Column(children: <Widget>[
@@ -209,9 +232,9 @@ class _EditBlockedState extends State<EditBlocked> {
                                                 borderRadius:
                                                     BorderRadius.circular(15))),
                                         /* onChanged: (dt) => setState(() {
-                            date = "$dt";
-                            print(dt);
-                          }),*/
+                                date = "$dt";
+                                print(dt);
+                            }),*/
                                       ),
                                       SizedBox(
                                         height:
@@ -318,19 +341,21 @@ class _EditBlockedState extends State<EditBlocked> {
                                           ),
                                         ),
                                       ])
-                                    ])));
-                          }
-                          return Center(
-                            child: CircularProgressIndicator(),
+                                    ]))),
                           );
-                        });
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
 
-                //-------------------------------------------------------------------------------
-              }
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }));
+              //-------------------------------------------------------------------------------
+            }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }),
+    );
   }
 
   Future<void> validateForm(String url) async {

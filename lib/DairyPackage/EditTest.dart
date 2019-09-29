@@ -32,6 +32,7 @@ class _EditTestState extends State<EditTest> {
   TextEditingController _testCenterController = new TextEditingController();
   TextEditingController _testTimeHourController = new TextEditingController();
   TextEditingController _testTimeMinController = new TextEditingController();
+  final currentTime = DateTime.now();
 
   List status = ["pending", "Delivered", "Cancelled"];
   List duration = [
@@ -184,11 +185,8 @@ class _EditTestState extends State<EditTest> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Edit Test"),
-      ),
-      body: FutureBuilder(
+    return Material(
+      child: FutureBuilder(
           future: getID(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -219,331 +217,360 @@ class _EditTestState extends State<EditTest> {
                   _duration =
                       snapViewBooking.data[widget.parseindex]['duration'];
 
-                  return SingleChildScrollView(
-                    child: Form(
-                        key: _formKey,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            FutureBuilder(
-                              future: api.fetchMsg(
-                                  "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
-                              builder: (context, snap) {
-                                if (snap.hasData) {
-                                  List<DropdownMenuItem<String>> items =
-                                      new List();
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: Text("Edit Test"),
+                      actions: <Widget>[
+                        Card(
+                          color: currentTime.isBefore(DateTime.parse(
+                                  snapViewBooking.data[widget.parseindex]
+                                      ['end_datetime']))
+                              ? Colors.white
+                              : Colors.red,
+                          margin: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width / 20),
+                          child: Container(
+                            child: Center(
+                                child: currentTime.isBefore(DateTime.parse(
+                                        snapViewBooking.data[widget.parseindex]
+                                            ['end_datetime']))
+                                    ? Text("Up coming")
+                                    : Text("Expired date")),
+                          ),
+                        )
+                      ],
+                    ),
+                    body: SingleChildScrollView(
+                      child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              FutureBuilder(
+                                future: api.fetchMsg(
+                                    "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
+                                builder: (context, snap) {
+                                  if (snap.hasData) {
+                                    List<DropdownMenuItem<String>> items =
+                                        new List();
 
-                                  for (int i = 0; i < snap.data.length; i++) {
-                                    String pupil = snap.data[i]["first_name"] +
-                                        " " +
-                                        snap.data[i]["last_name"];
-                                    String pupilID = snap.data[i]["id"];
-                                    // here we are creating the drop down menu items, you can customize the item right here
-                                    // but I'll just use a simple text for this
-                                    items.add(new DropdownMenuItem(
-                                        value: pupilID,
-                                        child: new Text(pupil)));
-                                  }
-                                  pupilItemstr = snapViewBooking
-                                                      .data[widget.parseindex]
-                                                  ['pupil_text'] ==
-                                              "" ||
-                                          snapViewBooking
-                                                      .data[widget.parseindex]
-                                                  ['pupil_text'] ==
-                                              null
-                                      ? items[0].value
-                                      : snapViewBooking.data[widget.parseindex]
-                                          ['pupil_text'];
-                                  void changedDropDownPupilItem(
-                                      String selectedCity) {
-                                    print(
-                                        "Selected city $selectedCity, we are going to refresh the UI");
-                                    setState(() {
-                                      pupilItemstr = selectedCity;
-                                    });
-                                  }
+                                    for (int i = 0; i < snap.data.length; i++) {
+                                      String pupil = snap.data[i]
+                                              ["first_name"] +
+                                          " " +
+                                          snap.data[i]["last_name"];
+                                      String pupilID = snap.data[i]["id"];
+                                      // here we are creating the drop down menu items, you can customize the item right here
+                                      // but I'll just use a simple text for this
+                                      items.add(new DropdownMenuItem(
+                                          value: pupilID,
+                                          child: new Text(pupil)));
+                                    }
+                                    pupilItemstr = snapViewBooking
+                                                        .data[widget.parseindex]
+                                                    ['pupil_text'] ==
+                                                "" ||
+                                            snapViewBooking
+                                                        .data[widget.parseindex]
+                                                    ['pupil_text'] ==
+                                                null
+                                        ? items[0].value
+                                        : snapViewBooking
+                                                .data[widget.parseindex]
+                                            ['pupil_text'];
+                                    void changedDropDownPupilItem(
+                                        String selectedCity) {
+                                      print(
+                                          "Selected city $selectedCity, we are going to refresh the UI");
+                                      setState(() {
+                                        pupilItemstr = selectedCity;
+                                      });
+                                    }
 
-                                  return ListTile(
-                                    title: Text(
-                                      "Pupil Name",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    subtitle: new DropdownButton(
-                                      value: pupilItemstr,
-                                      items: items,
-                                      onChanged: changedDropDownPupilItem,
-                                    ),
+                                    return ListTile(
+                                      title: Text(
+                                        "Pupil Name",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      subtitle: new DropdownButton(
+                                        value: pupilItemstr,
+                                        items: items,
+                                        onChanged: changedDropDownPupilItem,
+                                      ),
+                                    );
+                                  }
+                                  return Center(
+                                    child: CircularProgressIndicator(),
                                   );
-                                }
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            DateTimeField(
-                              controller: _startController,
-                              format: timeFormat,
-                              onShowPicker: (context, currentValue) async {
-                                final time = await showTimePicker(
-                                  context: context,
-                                  initialTime: TimeOfDay.fromDateTime(
-                                      currentValue ?? DateTime.now()),
-                                );
-                                return DateTimeField.convert(time);
-                              },
-                              decoration: InputDecoration(
-                                  labelText: 'Start',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15))),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            DateTimeField(
-                              format: dateFormat,
-                              controller: _dateController,
-                              onShowPicker: (context, currentValue) {
-                                return showDatePicker(
+                                },
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              DateTimeField(
+                                controller: _startController,
+                                format: timeFormat,
+                                onShowPicker: (context, currentValue) async {
+                                  final time = await showTimePicker(
                                     context: context,
-                                    firstDate: DateTime(1900),
-                                    initialDate: currentValue ?? DateTime.now(),
-                                    lastDate: DateTime(2100));
-                              },
-                              decoration: InputDecoration(
-                                  labelText: 'Date',
+                                    initialTime: TimeOfDay.fromDateTime(
+                                        currentValue ?? DateTime.now()),
+                                  );
+                                  return DateTimeField.convert(time);
+                                },
+                                decoration: InputDecoration(
+                                    labelText: 'Start',
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15))),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              DateTimeField(
+                                format: dateFormat,
+                                controller: _dateController,
+                                onShowPicker: (context, currentValue) {
+                                  return showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime(1900),
+                                      initialDate:
+                                          currentValue ?? DateTime.now(),
+                                      lastDate: DateTime(2100));
+                                },
+                                decoration: InputDecoration(
+                                    labelText: 'Date',
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(15))),
+                                /* onChanged: (dt) => setState(() {
+                              date = "$dt";
+                              print(dt);
+                            }),*/
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              ListTile(
+                                title: Text(
+                                  "Duration in Hrs",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                subtitle: new DropdownButton(
+                                  value: _duration,
+                                  items: _dropDownMenuDurationItems,
+                                  onChanged: changedDropDownDurationItem,
+                                ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: "Pupil Post Code",
+                                  hintText: "Pupil Post Code",
+                                  hintStyle: TextStyle(fontSize: 18),
                                   border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15))),
-                              /* onChanged: (dt) => setState(() {
-                            date = "$dt";
-                            print(dt);
-                          }),*/
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Duration in Hrs",
-                                style: TextStyle(fontWeight: FontWeight.w600),
+                                      borderRadius: BorderRadius.circular(15)),
+                                ),
+                                controller: _pupilPostCodeController,
+                                validator: (input) {
+                                  if (input.isEmpty) {
+                                    return "Pupil Post Code field should not be empty";
+                                  }
+                                  return null;
+                                },
                               ),
-                              subtitle: new DropdownButton(
-                                value: _duration,
-                                items: _dropDownMenuDurationItems,
-                                onChanged: changedDropDownDurationItem,
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
                               ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: "Pupil Post Code",
-                                hintText: "Pupil Post Code",
-                                hintStyle: TextStyle(fontSize: 18),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: "Do Post Code",
+                                  hintText: "Do Post Code",
+                                  hintStyle: TextStyle(fontSize: 18),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                ),
+                                controller: _doPostCodeController,
+                                validator: (input) {
+                                  if (input.isEmpty) {
+                                    return "Do Post Code field should not be empty";
+                                  }
+                                  return null;
+                                },
                               ),
-                              controller: _pupilPostCodeController,
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return "Pupil Post Code field should not be empty";
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: "Do Post Code",
-                                hintText: "Do Post Code",
-                                hintStyle: TextStyle(fontSize: 18),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
                               ),
-                              controller: _doPostCodeController,
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return "Do Post Code field should not be empty";
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: "Pupil Address",
-                                hintText: "Pupil Address",
-                                hintStyle: TextStyle(fontSize: 18),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: "Pupil Address",
+                                  hintText: "Pupil Address",
+                                  hintStyle: TextStyle(fontSize: 18),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                ),
+                                controller: _pupilAddressController,
+                                validator: (input) {
+                                  if (input.isEmpty) {
+                                    return "Pupil Address field should not be empty";
+                                  }
+                                  return null;
+                                },
                               ),
-                              controller: _pupilAddressController,
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return "Pupil Address field should not be empty";
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: "Memo",
-                                hintText: "Memo",
-                                hintStyle: TextStyle(fontSize: 18),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
                               ),
-                              controller: _memoController,
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return "Memo field should not be empty";
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Status",
-                                style: TextStyle(fontWeight: FontWeight.w600),
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: "Memo",
+                                  hintText: "Memo",
+                                  hintStyle: TextStyle(fontSize: 18),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                ),
+                                controller: _memoController,
+                                validator: (input) {
+                                  if (input.isEmpty) {
+                                    return "Memo field should not be empty";
+                                  }
+                                  return null;
+                                },
                               ),
-                              subtitle: new DropdownButton(
-                                value: _stat,
-                                items: _dropDownMenuStatusItems,
-                                onChanged: changedDropDownStatusItem,
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
                               ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: "Test Center",
-                                hintText: "Test Center",
-                                hintStyle: TextStyle(fontSize: 18),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                              ),
-                              controller: _testCenterController,
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return "Test Center field should not be empty";
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: "Test Time Hour",
-                                hintText: "Test Time Hour",
-                                hintStyle: TextStyle(fontSize: 18),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                              ),
-                              controller: _testTimeHourController,
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return "Test Time Hour field should not be empty";
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 40,
-                            ),
-                            TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: "Test Time Min",
-                                hintText: "Test Time Min",
-                                hintStyle: TextStyle(fontSize: 18),
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                              ),
-                              controller: _testTimeMinController,
-                              validator: (input) {
-                                if (input.isEmpty) {
-                                  return "Test Time Min field should not be empty";
-                                }
-                                return null;
-                              },
-                            ),
-                            Row(children: <Widget>[
-                              Expanded(
-                                child: FlatButton(
-                                  onPressed: () {
-                                    // TODO: implement validate function
-
-                                    validateForm(
-                                        "https://drivinginstructorsdiary.com/app/api/updateTestApi/" +
-                                            "${widget.bookingID}");
-                                  },
-                                  child: Text(
-                                    "Update Lesson",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  color: Colors.blue,
+                              ListTile(
+                                title: Text(
+                                  "Status",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                subtitle: new DropdownButton(
+                                  value: _stat,
+                                  items: _dropDownMenuStatusItems,
+                                  onChanged: changedDropDownStatusItem,
                                 ),
                               ),
-                              Expanded(
-                                child: FlatButton(
-                                  onPressed: () {
-                                    deleteLesson(
-                                        "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
-                                            "${widget.bookingID}",
-                                        body: {
-                                          'instructor_id': snapshot.data,
-                                          'date': _dateController.text
-                                        });
-
-                                    Navigator.pop(context,
-                                        new MaterialPageRoute(
-                                            builder: (context) {
-                                      return CalenderPage();
-                                    }));
-                                  },
-                                  child: Text("Delete Lesson"),
-                                  color: Colors.red,
-                                ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
                               ),
-                              Expanded(
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: "Test Center",
+                                  hintText: "Test Center",
+                                  hintStyle: TextStyle(fontSize: 18),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                ),
+                                controller: _testCenterController,
+                                validator: (input) {
+                                  if (input.isEmpty) {
+                                    return "Test Center field should not be empty";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: "Test Time Hour",
+                                  hintText: "Test Time Hour",
+                                  hintStyle: TextStyle(fontSize: 18),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                ),
+                                controller: _testTimeHourController,
+                                validator: (input) {
+                                  if (input.isEmpty) {
+                                    return "Test Time Hour field should not be empty";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height / 40,
+                              ),
+                              TextFormField(
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: "Test Time Min",
+                                  hintText: "Test Time Min",
+                                  hintStyle: TextStyle(fontSize: 18),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                ),
+                                controller: _testTimeMinController,
+                                validator: (input) {
+                                  if (input.isEmpty) {
+                                    return "Test Time Min field should not be empty";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              Row(children: <Widget>[
+                                Expanded(
                                   child: FlatButton(
-                                      onPressed: () {
-                                        Navigator.push(context,
-                                            new MaterialPageRoute(
-                                                builder: (context) {
-                                          return SignaturePage(
-                                              widget.bookingID);
-                                        }));
-                                      },
-                                      child: Text("ADD Signature")))
-                            ])
-                          ],
-                        )),
+                                    onPressed: () {
+                                      // TODO: implement validate function
+
+                                      validateForm(
+                                          "https://drivinginstructorsdiary.com/app/api/updateTestApi/" +
+                                              "${widget.bookingID}");
+                                    },
+                                    child: Text(
+                                      "Update Lesson",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: FlatButton(
+                                    onPressed: () {
+                                      deleteLesson(
+                                          "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
+                                              "${widget.bookingID}",
+                                          body: {
+                                            'instructor_id': snapshot.data,
+                                            'date': _dateController.text
+                                          });
+
+                                      Navigator.pop(context,
+                                          new MaterialPageRoute(
+                                              builder: (context) {
+                                        return CalenderPage();
+                                      }));
+                                    },
+                                    child: Text("Delete Lesson"),
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                Expanded(
+                                    child: FlatButton(
+                                        onPressed: () {
+                                          Navigator.push(context,
+                                              new MaterialPageRoute(
+                                                  builder: (context) {
+                                            return SignaturePage(
+                                                widget.bookingID);
+                                          }));
+                                        },
+                                        child: Text("ADD Signature")))
+                              ])
+                            ],
+                          )),
+                    ),
                   );
                 }
 

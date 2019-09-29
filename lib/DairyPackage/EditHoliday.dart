@@ -26,6 +26,7 @@ class _EditHolidayState extends State<EditHoliday> {
   TextEditingController _durationDaysController = new TextEditingController();
   TextEditingController _reasonController = new TextEditingController();
   API api = new API();
+  final currentTime = DateTime.now();
   List duration = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 
   List<DropdownMenuItem<String>> _dropDownMenuDurationItems;
@@ -125,11 +126,8 @@ class _EditHolidayState extends State<EditHoliday> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Edit Holiday"),
-      ),
-      body: FutureBuilder(
+    return Material(
+      child: FutureBuilder(
           future: getID(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -158,115 +156,141 @@ class _EditHolidayState extends State<EditHoliday> {
                           ? "1"
                           : snapViewBooking.data[widget.parseindex]['duration'];
 
-                      return SingleChildScrollView(
-                        child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: <Widget>[
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 40,
-                                ),
-                                DateTimeField(
-                                  format: dateFormat,
-                                  controller: _dateController,
-                                  onShowPicker: (context, currentValue) {
-                                    return showDatePicker(
-                                        context: context,
-                                        firstDate: DateTime(1900),
-                                        initialDate:
-                                            currentValue ?? DateTime.now(),
-                                        lastDate: DateTime(2100));
-                                  },
-                                  decoration: InputDecoration(
-                                      labelText: 'Date',
+                      return Scaffold(
+                        appBar: AppBar(
+                          title: Text("Edit Holiday"),
+                          actions: <Widget>[
+                            Card(
+                              color: currentTime.isBefore(DateTime.parse(
+                                      snapViewBooking.data[widget.parseindex]
+                                          ['end_datetime']))
+                                  ? Colors.white
+                                  : Colors.red,
+                              margin: EdgeInsets.only(
+                                  right:
+                                      MediaQuery.of(context).size.width / 20),
+                              child: Container(
+                                child: Center(
+                                    child: currentTime.isBefore(DateTime.parse(
+                                            snapViewBooking
+                                                    .data[widget.parseindex]
+                                                ['end_datetime']))
+                                        ? Text("Up coming")
+                                        : Text("Expired date")),
+                              ),
+                            )
+                          ],
+                        ),
+                        body: SingleChildScrollView(
+                          child: Form(
+                              key: _formKey,
+                              child: Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 40,
+                                  ),
+                                  DateTimeField(
+                                    format: dateFormat,
+                                    controller: _dateController,
+                                    onShowPicker: (context, currentValue) {
+                                      return showDatePicker(
+                                          context: context,
+                                          firstDate: DateTime(1900),
+                                          initialDate:
+                                              currentValue ?? DateTime.now(),
+                                          lastDate: DateTime(2100));
+                                    },
+                                    decoration: InputDecoration(
+                                        labelText: 'Date',
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15))),
+                                    /* onChanged: (dt) => setState(() {
+                                date = "$dt";
+                                print(dt);
+                              }),*/
+                                  ),
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 40,
+                                  ),
+                                  ListTile(
+                                    title: Text(
+                                      "Duration",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    subtitle: new DropdownButton(
+                                      value: _duration,
+                                      items: _dropDownMenuDurationItems,
+                                      onChanged: changedDropDownDurationItem,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 40,
+                                  ),
+                                  TextFormField(
+                                    decoration: InputDecoration(
+                                      labelText: "Reason",
+                                      hintText: "Reason",
+                                      hintStyle: TextStyle(fontSize: 18),
                                       border: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(15))),
-                                  /* onChanged: (dt) => setState(() {
-                              date = "$dt";
-                              print(dt);
-                            }),*/
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 40,
-                                ),
-                                ListTile(
-                                  title: Text(
-                                    "Duration",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w600),
+                                              BorderRadius.circular(15)),
+                                    ),
+                                    controller: _reasonController,
+                                    validator: (input) {
+                                      if (input.isEmpty) {
+                                        return "Reason field should not be empty";
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  subtitle: new DropdownButton(
-                                    value: _duration,
-                                    items: _dropDownMenuDurationItems,
-                                    onChanged: changedDropDownDurationItem,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height / 40,
-                                ),
-                                TextFormField(
-                                  decoration: InputDecoration(
-                                    labelText: "Reason",
-                                    hintText: "Reason",
-                                    hintStyle: TextStyle(fontSize: 18),
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                  ),
-                                  controller: _reasonController,
-                                  validator: (input) {
-                                    if (input.isEmpty) {
-                                      return "Reason field should not be empty";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                Row(children: <Widget>[
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: () {
-                                        // TODO: implement validate function
+                                  Row(children: <Widget>[
+                                    Expanded(
+                                      child: FlatButton(
+                                        onPressed: () {
+                                          // TODO: implement validate function
 
-                                        validateForm(
-                                            "https://drivinginstructorsdiary.com/app/api/updateHolidayApi/" +
-                                                "${widget.bookingID}");
-                                      },
-                                      child: Text(
-                                        "Update holiday",
-                                        style: TextStyle(
-                                          color: Colors.white,
+                                          validateForm(
+                                              "https://drivinginstructorsdiary.com/app/api/updateHolidayApi/" +
+                                                  "${widget.bookingID}");
+                                        },
+                                        child: Text(
+                                          "Update holiday",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
                                         ),
+                                        color: Colors.blue,
                                       ),
-                                      color: Colors.blue,
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: FlatButton(
-                                      onPressed: () {
-                                        deleteHoliday(
-                                            "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
-                                                "${widget.bookingID}",
-                                            body: {
-                                              'instructor_id': snapshot.data,
-                                              'date': _dateController.text
-                                            });
-                                        Navigator.pop(context,
-                                            new MaterialPageRoute(
-                                                builder: (context) {
-                                          return CalenderPage();
-                                        }));
-                                      },
-                                      child: Text("Delete holiday"),
-                                      color: Colors.red,
+                                    Expanded(
+                                      child: FlatButton(
+                                        onPressed: () {
+                                          deleteHoliday(
+                                              "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
+                                                  "${widget.bookingID}",
+                                              body: {
+                                                'instructor_id': snapshot.data,
+                                                'date': _dateController.text
+                                              });
+                                          Navigator.pop(context,
+                                              new MaterialPageRoute(
+                                                  builder: (context) {
+                                            return CalenderPage();
+                                          }));
+                                        },
+                                        child: Text("Delete holiday"),
+                                        color: Colors.red,
+                                      ),
                                     ),
-                                  ),
-                                ])
-                              ],
-                            )),
+                                  ])
+                                ],
+                              )),
+                        ),
                       );
                     }
                     return Center(

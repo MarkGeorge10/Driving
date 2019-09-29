@@ -16,7 +16,6 @@ import 'PupilPackage/InactivePupil.dart';
 import 'RegistrationForm/LoginPage.dart';
 import 'TransactionPackage/AddTransaction.dart';
 
-
 void main() => runApp(MyAPP());
 
 class MyAPP extends StatefulWidget {

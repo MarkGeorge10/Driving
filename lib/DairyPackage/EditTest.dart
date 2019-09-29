@@ -536,7 +536,8 @@ class _EditTestState extends State<EditTest> {
                                         Navigator.push(context,
                                             new MaterialPageRoute(
                                                 builder: (context) {
-                                          return Signature(widget.bookingID);
+                                          return SignaturePage(
+                                              widget.bookingID);
                                         }));
                                       },
                                       child: Text("ADD Signature")))

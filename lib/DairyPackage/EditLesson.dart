@@ -521,7 +521,7 @@ class _EditLessontState extends State<EditLesson> {
                                                 Navigator.push(context,
                                                     new MaterialPageRoute(
                                                         builder: (context) {
-                                                  return Signature(
+                                                  return SignaturePage(
                                                       widget.bookingID);
                                                 }));
                                               },

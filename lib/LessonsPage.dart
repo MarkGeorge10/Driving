@@ -19,6 +19,8 @@ class _LessonsPageState extends State<LessonsPage> {
 
   List<dynamic> lessonItem;
 
+  Color cInput;
+
   Future<List<dynamic>> fetchLessons(String url) async {
     //print(body);
 
@@ -82,7 +84,18 @@ class _LessonsPageState extends State<LessonsPage> {
                               endList = endDate.split('/');
                             }
 
+                            if (snap.data[index]['type'] == 'lesson') {
+                              cInput = const Color(0xFF37F7A4);
+                            } else if (snap.data[index]['type'] == 'holiday') {
+                              cInput = const Color(0xFFF2F584);
+                            } else if (snap.data[index]['type'] == 'blocked') {
+                              cInput = const Color(0xFFB8B8B4);
+                            } else if (snap.data[index]['type'] == 'test') {
+                              cInput = const Color(0xFF67F4F7);
+                            }
+
                             return Card(
+                              color: cInput,
                               elevation: 10.0,
                               child: ListTile(
                                 title: Column(

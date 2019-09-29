@@ -1,14 +1,20 @@
 import 'dart:convert';
 
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:driving_instructor/PupilPackage/API.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Calender page.dart';
+
 class EditBlocked extends StatefulWidget {
   String bookingID;
-  EditBlocked(this.bookingID);
+  int parseindex;
+
+  EditBlocked(this.bookingID, this.parseindex);
+
   @override
   _EditBlockedState createState() => _EditBlockedState();
 }
@@ -19,7 +25,7 @@ class _EditBlockedState extends State<EditBlocked> {
   TextEditingController _durationDaysController = new TextEditingController();
   TextEditingController _reasonController = new TextEditingController();
   TextEditingController _startController = new TextEditingController();
-
+  API api = new API();
   List duration = [
     "0.5",
     "1",
@@ -119,8 +125,6 @@ class _EditBlockedState extends State<EditBlocked> {
     // TODO: implement initState
     super.initState();
     _dropDownMenuDurationItems = getDropDownDurationMenuItems();
-
-    _duration = _dropDownMenuDurationItems[0].value;
   }
 
   List<DropdownMenuItem<String>> getDropDownDurationMenuItems() {
@@ -143,139 +147,190 @@ class _EditBlockedState extends State<EditBlocked> {
 
   final dateFormat = DateFormat("dd/MM/yyyy");
   final timeFormat = DateFormat("h:mm");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Edit Blocked"),
-      ),
-      body: FutureBuilder(
-          future: getID(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return SingleChildScrollView(
-                child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height / 40,
-                        ),
-                        DateTimeField(
-                          format: dateFormat,
-                          controller: _dateController,
-                          onShowPicker: (context, currentValue) {
-                            return showDatePicker(
-                                context: context,
-                                firstDate: DateTime(1900),
-                                initialDate: currentValue ?? DateTime.now(),
-                                lastDate: DateTime(2100));
-                          },
-                          decoration: InputDecoration(
-                              labelText: 'Date',
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15))),
-                          /* onChanged: (dt) => setState(() {
+        appBar: AppBar(
+          title: Text("Edit Blocked"),
+        ),
+        body: FutureBuilder(
+            future: getID(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return
+                    //-------------------------------------------------------------------------------
+                    FutureBuilder(
+                        future: api.fetchBooking(
+                            "https://drivinginstructorsdiary.com/app/api/viewBookingApi?instructor_id=" +
+                                "${snapshot.data}"),
+                        builder: (context, snapViewBooking) {
+                          if (snapViewBooking.hasData) {
+                            _dateController.text = snapViewBooking
+                                .data[widget.parseindex]['start_datetime']
+                                .substring(0, 10);
+
+                            _startController.text = snapViewBooking
+                                .data[widget.parseindex]['start_datetime']
+                                .substring(11, 16);
+
+                            _reasonController.text = snapViewBooking
+                                        .data[widget.parseindex]['reason'] ==
+                                    null
+                                ? ""
+                                : snapViewBooking.data[widget.parseindex]
+                                    ['reason'];
+
+                            _duration = snapViewBooking.data[widget.parseindex]
+                                ['duration'];
+                            return SingleChildScrollView(
+                                child: Form(
+                                    key: _formKey,
+                                    child: Column(children: <Widget>[
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                40,
+                                      ),
+                                      DateTimeField(
+                                        format: dateFormat,
+                                        controller: _dateController,
+                                        onShowPicker: (context, currentValue) {
+                                          return showDatePicker(
+                                              context: context,
+                                              firstDate: DateTime(1900),
+                                              initialDate: currentValue ??
+                                                  DateTime.now(),
+                                              lastDate: DateTime(2100));
+                                        },
+                                        decoration: InputDecoration(
+                                            labelText: 'Date',
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15))),
+                                        /* onChanged: (dt) => setState(() {
                             date = "$dt";
                             print(dt);
                           }),*/
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height / 40,
-                        ),
-                        ListTile(
-                          title: Text(
-                            "Duration in Hrs",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          subtitle: new DropdownButton(
-                            value: _duration,
-                            items: _dropDownMenuDurationItems,
-                            onChanged: changedDropDownDurationItem,
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height / 40,
-                        ),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: "Reason",
-                            hintText: "Reason",
-                            hintStyle: TextStyle(fontSize: 18),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                          ),
-                          controller: _reasonController,
-                          validator: (input) {
-                            if (input.isEmpty) {
-                              return "Reason field should not be empty";
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height / 40,
-                        ),
-                        DateTimeField(
-                          controller: _startController,
-                          format: timeFormat,
-                          onShowPicker: (context, currentValue) async {
-                            final time = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.fromDateTime(
-                                  currentValue ?? DateTime.now()),
-                            );
-                            return DateTimeField.convert(time);
-                          },
-                          decoration: InputDecoration(
-                              labelText: 'Start',
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15))),
-                        ),
-                        Row(children: <Widget>[
-                          Expanded(
-                            child: FlatButton(
-                              onPressed: () {
-                                // TODO: implement validate function
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                40,
+                                      ),
+                                      ListTile(
+                                        title: Text(
+                                          "Duration in Hrs",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        subtitle: new DropdownButton(
+                                          value: _duration,
+                                          items: _dropDownMenuDurationItems,
+                                          onChanged:
+                                              changedDropDownDurationItem,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                40,
+                                      ),
+                                      TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: "Reason",
+                                          hintText: "Reason",
+                                          hintStyle: TextStyle(fontSize: 18),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                        ),
+                                        controller: _reasonController,
+                                        validator: (input) {
+                                          if (input.isEmpty) {
+                                            return "Reason field should not be empty";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                40,
+                                      ),
+                                      DateTimeField(
+                                        controller: _startController,
+                                        format: timeFormat,
+                                        onShowPicker:
+                                            (context, currentValue) async {
+                                          final time = await showTimePicker(
+                                            context: context,
+                                            initialTime: TimeOfDay.fromDateTime(
+                                                currentValue ?? DateTime.now()),
+                                          );
+                                          return DateTimeField.convert(time);
+                                        },
+                                        decoration: InputDecoration(
+                                            labelText: 'Start',
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15))),
+                                      ),
+                                      Row(children: <Widget>[
+                                        Expanded(
+                                          child: FlatButton(
+                                            onPressed: () {
+                                              // TODO: implement validate function
 
-                                validateForm(
-                                    "https://drivinginstructorsdiary.com/app/api/updateBlockedApi/" +
-                                        "${widget.bookingID}");
-                              },
-                              child: Text(
-                                "Update Blocked",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              color: Colors.blue,
-                            ),
-                          ),
-                          Expanded(
-                            child: FlatButton(
-                              onPressed: () {
-                                deleteHoliday(
-                                    "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
-                                        "${widget.bookingID}",
-                                    body: {
-                                      'instructor_id': snapshot.data,
-                                      'date': _dateController.text
-                                    });
-                              },
-                              child: Text("Delete blocked"),
-                              color: Colors.red,
-                            ),
-                          ),
-                        ])
-                      ],
-                    )),
+                                              validateForm(
+                                                  "https://drivinginstructorsdiary.com/app/api/updateBlockedApi/" +
+                                                      "${widget.bookingID}");
+                                            },
+                                            child: Text(
+                                              "Update Blocked",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: FlatButton(
+                                            onPressed: () {
+                                              deleteHoliday(
+                                                  "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
+                                                      "${widget.bookingID}",
+                                                  body: {
+                                                    'instructor_id':
+                                                        snapshot.data,
+                                                    'date': _dateController.text
+                                                  });
+
+                                              Navigator.pop(context,
+                                                  new MaterialPageRoute(
+                                                      builder: (context) {
+                                                return CalenderPage();
+                                              }));
+                                            },
+                                            child: Text("Delete blocked"),
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ])
+                                    ])));
+                          }
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        });
+
+                //-------------------------------------------------------------------------------
+              }
+              return Center(
+                child: CircularProgressIndicator(),
               );
-            }
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
-    );
+            }));
   }
 
   Future<void> validateForm(String url) async {

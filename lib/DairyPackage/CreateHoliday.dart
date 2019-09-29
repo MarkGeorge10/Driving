@@ -210,8 +210,8 @@ class _CreateHolidayState extends State<CreateHoliday> {
 
     if (formState.validate()) {
       await createTransaction(url, body: {
-        "date": _dateController.text.substring(0, 9),
-        "durationDays": _durationDaysController.text,
+        "date": _dateController.text.substring(0, 10),
+        "durationDays": _duration,
         "reason": _reasonController.text
       });
       formState.reset();

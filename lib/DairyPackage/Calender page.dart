@@ -4,8 +4,10 @@ import 'package:calendar_view_widget/calendar_view_widget.dart';
 import 'package:driving_instructor/PupilPackage/API.dart';
 import 'package:flutter/material.dart';
 
+import 'EditBlocked.dart';
 import 'EditHoliday.dart';
 import 'EditLesson.dart';
+import 'EditTest.dart';
 
 class CalenderPage extends StatefulWidget {
   CalenderPage({Key key, this.title}) : super(key: key);
@@ -31,43 +33,63 @@ class _CalenderPageState extends State<CalenderPage>
 
   List<Map<String, String>> eventsList = [];
 
+  bool check = false;
+
   @override
   Widget build(BuildContext context) {
     void onEventTapped(Map<String, String> event) {
       if (event['type'].substring(0, 6) == 'lesson') {
         int index;
-
         index = eventsList.indexOf(event);
-
+        eventsController.close();
+        check = true;
         print(index);
+        List<String> startList;
+        if (event['start_datetime'] == null) {
+          String startDate = "0000-00-00".replaceAll(new RegExp(r'-'), '/');
+
+          String endDate = "0000-00-00".replaceAll(new RegExp(r'-'), '/');
+
+          startList = startDate.split('/');
+        } else {
+          String startDate =
+              event['start_datetime'].replaceAll(new RegExp(r'-'), '/');
+
+          startList = startDate.split('/');
+        }
+
         Navigator.push(context, new MaterialPageRoute(builder: (context) {
-          return EditLesson(event['id'], index, event['pupil_text']);
+          return EditLesson(event['id'], index, event['start_datetime']);
         }));
       } else if (event['type'].substring(0, 7) == 'holiday') {
         int index;
 
         index = eventsList.indexOf(event);
-
+        eventsController.close();
+        check = true;
         print(index);
         Navigator.push(context, new MaterialPageRoute(builder: (context) {
-          return EditHoliday(event['id']);
+          return EditHoliday(event['id'], index);
         }));
       } else if (event['type'].substring(0, 7) == 'blocked') {
         int index;
 
         index = eventsList.indexOf(event);
-
+        eventsController.close();
+        check = true;
         print(index);
         Navigator.push(context, new MaterialPageRoute(builder: (context) {
-          return EditHoliday(event['id']);
+          return EditBlocked(event['id'], index);
         }));
-      } else if (event['type'].substring(0, 4) == 'test') {
+      } else if (event['type'].substring(0, 4) == 'test' ||
+          event['type'].substring(0, 4) == 'Test') {
         int index;
-
+        eventsController.close();
+        check = true;
         index = eventsList.indexOf(event);
         print(index);
         Navigator.push(context, new MaterialPageRoute(builder: (context) {
-          return EditHoliday(event['id']);
+          return EditTest(event['id'], index);
         }));
       }
 
@@ -83,24 +105,29 @@ class _CalenderPageState extends State<CalenderPage>
                     "${snapshot.data}"),
             builder: (context, snap) {
               if (snap.hasData) {
-                for (int i = 0; i < snap.data.length; i++) {
-                  eventsList.add(
-                    {
-                      'type': snap.data[i]['pupil_text'] == null ||
-                              snap.data[i]['pupil_text'] == ""
-                          ? snap.data[i]['type']
-                          : snap.data[i]['type'] +
-                              "\n" +
-                              snap.data[i]['pupil_text'],
-                      'reason': snap.data[i]['reason'] == null ||
-                              snap.data[i]['reason'] == ""
-                          ? ""
-                          : snap.data[i]['reason'],
-                      'date': snap.data[i]['start_datetime'],
-                      'id': snap.data[i]['id']
-                    },
-                  );
-                  eventsController.add(eventsList);
+                print(snap.data.length);
+
+                if (check == false) {
+                  for (int i = 0; i < snap.data.length; i++) {
+                    eventsList.add(
+                      {
+                        'type': snap.data[i]['pupil_text'] == null ||
+                                snap.data[i]['pupil_text'] == ""
+                            ? snap.data[i]['type']
+                            : snap.data[i]['type'] +
+                                "\n" +
+                                snap.data[i]['pupil_text'],
+                        'reason': snap.data[i]['reason'] == null ||
+                                snap.data[i]['reason'] == ""
+                            ? ""
+                            : snap.data[i]['reason'],
+                        'date': snap.data[i]['start_datetime'],
+                        'id': snap.data[i]['id']
+                      },
+                    );
+
+                    eventsController.add(eventsList);
+                  }
                 }
 
                 print(eventsController);

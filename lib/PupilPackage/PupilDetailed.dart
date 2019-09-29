@@ -45,7 +45,9 @@ class _PupilDetailedState extends State<PupilDetailed> {
                           fontWeight: FontWeight.w600, fontSize: 17.0),
                     ),
                     Text(
-                      widget.firstName,
+                      widget.firstName == null || widget.firstName == ""
+                          ? ""
+                          : widget.firstName,
                       style: TextStyle(fontSize: 15.0),
                     )
                   ],
@@ -60,7 +62,9 @@ class _PupilDetailedState extends State<PupilDetailed> {
                           fontWeight: FontWeight.w600, fontSize: 17.0),
                     ),
                     Text(
-                      widget.lastName,
+                      widget.lastName == null || widget.lastName == ""
+                          ? ""
+                          : widget.lastName,
                       style: TextStyle(fontSize: 15.0),
                     )
                   ],
@@ -75,7 +79,9 @@ class _PupilDetailedState extends State<PupilDetailed> {
                           fontWeight: FontWeight.w600, fontSize: 17.0),
                     ),
                     Text(
-                      widget.email,
+                      widget.email == null || widget.email == ""
+                          ? ""
+                          : widget.email,
                       style: TextStyle(fontSize: 15.0),
                     )
                   ],
@@ -90,7 +96,9 @@ class _PupilDetailedState extends State<PupilDetailed> {
                           fontWeight: FontWeight.w600, fontSize: 17.0),
                     ),
                     Text(
-                      widget.phone,
+                      widget.phone == null || widget.phone == ""
+                          ? ""
+                          : widget.phone,
                       style: TextStyle(fontSize: 15.0),
                     )
                   ],

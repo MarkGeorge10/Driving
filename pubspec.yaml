@@ -14,7 +14,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -33,6 +33,10 @@ dependencies:
   flutter_local_notifications: ^0.8.3
   intl:
   basic_utils:
+  flutter_signature_pad: ^2.0.0+1
+  simple_permissions: 
+  path_provider:
+
 
 
 

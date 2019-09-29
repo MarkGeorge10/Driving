@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import 'Calender page.dart';
 import 'Signature.dart';
 
 class EditLesson extends StatefulWidget {
-  String bookingID, name;
-  int index;
+  String bookingID, date;
+  int parseindex;
 
-  EditLesson(this.bookingID, this.index, this.name);
+  EditLesson(this.bookingID, this.parseindex, this.date);
 
   @override
   _EditLessontState createState() => _EditLessontState();
@@ -21,13 +22,13 @@ class EditLesson extends StatefulWidget {
 class _EditLessontState extends State<EditLesson> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _signature = new TextEditingController();
-
-  TextEditingController _dateController = new TextEditingController();
   TextEditingController _pupilPostCodeController = new TextEditingController();
   TextEditingController _pupilAddressController = new TextEditingController();
   TextEditingController _doPostCodeController = new TextEditingController();
   TextEditingController _memoController = new TextEditingController();
   TextEditingController _startController = new TextEditingController();
+  TextEditingController _dateController = new TextEditingController();
+
   List status = ["pending", "Delivered", "Cancelled"];
   String pupilItemstr;
 
@@ -157,9 +158,7 @@ class _EditLessontState extends State<EditLesson> {
   void initState() {
     _dropDownMenuStatusItems = getDropDownStatusMenuItems();
     _dropDownMenuDurationItems = getDropDownDurationMenuItems();
-
-    _stat = _dropDownMenuStatusItems[0].value;
-    _duration = _dropDownMenuDurationItems[0].value;
+    //_stat = _dropDownMenuStatusItems[0].value;
     super.initState();
   }
 
@@ -205,258 +204,338 @@ class _EditLessontState extends State<EditLesson> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Edit Lesson"),
-      ),
-      body: FutureBuilder(
-        future: api.getID(),
-        builder: (context, snapshot) {
-          return SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
+        appBar: AppBar(
+          title: Text("Edit Lesson"),
+        ),
+        body: FutureBuilder(
+            future: api.getID(),
+            builder: (context, snapshot) {
+              return
+                  //-------------------------------------------------------------------------------
                   FutureBuilder(
-                    future: api.fetchPupil(
-                        "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
-                    builder: (context, snapshotName) {
-                      if (snapshotName.hasData) {
-                        List<DropdownMenuItem<String>> items = new List();
+                      future: api.fetchBooking(
+                          "https://drivinginstructorsdiary.com/app/api/viewBookingApi?instructor_id=" +
+                              "${snapshot.data}"),
+                      builder: (context, snapViewBooking) {
+                        if (snapViewBooking.hasData) {
+                          _dateController.text = snapViewBooking
+                              .data[widget.parseindex]['start_datetime']
+                              .substring(0, 10);
 
-                        for (int i = 0; i < snapshotName.data.length; i++) {
-                          String pupil = snapshotName.data[i]["first_name"] +
-                              " " +
-                              snapshotName.data[i]["last_name"];
-                          String pupilID = snapshotName.data[i]["id"];
-                          // here we are creating the drop down menu items, you can customize the item right here
-                          // but I'll just use a simple text for this
-                          items.add(new DropdownMenuItem(
-                              value: pupilID, child: new Text(pupil)));
-                        }
-                        pupilItemstr = items[0].value;
-                        void changedDropDownPupilItem(String selectedCity) {
-                          print(
-                              "Selected city $selectedCity, we are going to refresh the UI");
-                          setState(() {
-                            pupilItemstr = selectedCity;
-                          });
-                        }
+                          _startController.text = snapViewBooking
+                              .data[widget.parseindex]['start_datetime']
+                              .substring(11, 16);
 
-                        return ListTile(
-                          title: Text(
-                            "Pupil Name",
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          subtitle: new DropdownButton(
-                            value: pupilItemstr,
-                            items: items,
-                            onChanged: changedDropDownPupilItem,
-                          ),
-                        );
-                      }
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  DateTimeField(
-                    controller: _startController,
-                    format: timeFormat,
-                    onShowPicker: (context, currentValue) async {
-                      final time = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.fromDateTime(
-                            currentValue ?? DateTime.now()),
-                      );
-                      return DateTimeField.convert(time);
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Start',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15))),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  DateTimeField(
-                    format: dateFormat,
-                    controller: _dateController,
-                    onShowPicker: (context, currentValue) {
-                      return showDatePicker(
-                          context: context,
-                          firstDate: DateTime(1900),
-                          initialDate: currentValue ?? DateTime.now(),
-                          lastDate: DateTime(2100));
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Date',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15))),
-                    /* onChanged: (dt) => setState(() {
+                          _pupilPostCodeController.text = snapViewBooking
+                              .data[widget.parseindex]['p_u_postcode'];
+
+                          _doPostCodeController.text = snapViewBooking
+                              .data[widget.parseindex]['d_o_postcode'];
+                          _pupilAddressController.text = snapViewBooking
+                              .data[widget.parseindex]['p_u_address'];
+
+                          _memoController.text = snapViewBooking
+                                      .data[widget.parseindex]['memo'] ==
+                                  null
+                              ? ""
+                              : snapViewBooking.data[widget.parseindex]['memo'];
+
+                          _duration = snapViewBooking.data[widget.parseindex]
+                              ['duration'];
+                          return SingleChildScrollView(
+                              child: Form(
+                                  key: _formKey,
+                                  child: Column(children: <Widget>[
+                                    FutureBuilder(
+                                      future: api.fetchPupil(
+                                          "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
+                                      builder: (context, snapshotName) {
+                                        if (snapshotName.hasData) {
+                                          List<DropdownMenuItem<String>> items =
+                                              new List();
+
+                                          for (int i = 0;
+                                              i < snapshotName.data.length;
+                                              i++) {
+                                            String pupil = snapshotName.data[i]
+                                                    ["first_name"] +
+                                                " " +
+                                                snapshotName.data[i]
+                                                    ["last_name"];
+                                            String pupilID =
+                                                snapshotName.data[i]["id"];
+                                            // here we are creating the drop down menu items, you can customize the item right here
+                                            // but I'll just use a simple text for this
+                                            items.add(new DropdownMenuItem(
+                                                value: pupilID,
+                                                child: new Text(pupil)));
+                                          }
+                                          pupilItemstr = items[0].value;
+
+                                          _stat =
+                                              _dropDownMenuStatusItems[0].value;
+                                          void changedDropDownPupilItem(
+                                              String selectedCity) {
+                                            print(
+                                                "Selected city $selectedCity, we are going to refresh the UI");
+                                            setState(() {
+                                              pupilItemstr = selectedCity;
+                                            });
+                                          }
+
+                                          return ListTile(
+                                            title: Text(
+                                              "Pupil Name",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            subtitle: new DropdownButton(
+                                              value: pupilItemstr,
+                                              items: items,
+                                              onChanged:
+                                                  changedDropDownPupilItem,
+                                            ),
+                                          );
+                                        }
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
+                                    DateTimeField(
+                                      controller: _startController,
+                                      format: timeFormat,
+                                      onShowPicker:
+                                          (context, currentValue) async {
+                                        final time = await showTimePicker(
+                                          context: context,
+                                          initialTime: TimeOfDay.fromDateTime(
+                                              currentValue ?? DateTime.now()),
+                                        );
+                                        return DateTimeField.convert(time);
+                                      },
+                                      decoration: InputDecoration(
+                                          labelText: 'Start',
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15))),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
+                                    DateTimeField(
+                                      format: dateFormat,
+                                      controller: _dateController,
+                                      onShowPicker: (context, currentValue) {
+                                        return showDatePicker(
+                                            context: context,
+                                            firstDate: DateTime(1900),
+                                            initialDate:
+                                                currentValue ?? DateTime.now(),
+                                            lastDate: DateTime(2100));
+                                      },
+                                      decoration: InputDecoration(
+                                          labelText: 'Date',
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15))),
+                                      /* onChanged: (dt) => setState(() {
                       date = "$dt";
                       print(dt);
                     }),*/
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  ListTile(
-                    title: Text(
-                      "Duration in Hrs",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: new DropdownButton(
-                      value: _duration,
-                      items: _dropDownMenuDurationItems,
-                      onChanged: changedDropDownDurationItem,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: "Pupil Post Code",
-                      hintText: "Pupil Post Code",
-                      hintStyle: TextStyle(fontSize: 18),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                    controller: _pupilPostCodeController,
-                    validator: (input) {
-                      if (input.isEmpty) {
-                        return "Pupil Post Code field should not be empty";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: "Do Post Code",
-                      hintText: "Do Post Code",
-                      hintStyle: TextStyle(fontSize: 18),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                    controller: _doPostCodeController,
-                    validator: (input) {
-                      if (input.isEmpty) {
-                        return "Do Post Code field should not be empty";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: "Pupil Address",
-                      hintText: "Pupil Address",
-                      hintStyle: TextStyle(fontSize: 18),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                    controller: _pupilAddressController,
-                    validator: (input) {
-                      if (input.isEmpty) {
-                        return "Pupil Address field should not be empty";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: "Memo",
-                      hintText: "Memo",
-                      hintStyle: TextStyle(fontSize: 18),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                    ),
-                    controller: _memoController,
-                    validator: (input) {
-                      if (input.isEmpty) {
-                        return "Memo field should not be empty";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 40,
-                  ),
-                  ListTile(
-                    title: Text(
-                      "Status",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: new DropdownButton(
-                      value: _stat,
-                      items: _dropDownMenuStatusItems,
-                      onChanged: changedDropDownStatusItem,
-                    ),
-                  ),
-                  Row(children: <Widget>[
-                    Expanded(
-                      child: FlatButton(
-                        onPressed: () {
-                          // TODO: implement validate function
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
+                                    ListTile(
+                                      title: Text(
+                                        "Duration in Hrs",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      subtitle: new DropdownButton(
+                                        value: _duration,
+                                        items: _dropDownMenuDurationItems,
+                                        onChanged: changedDropDownDurationItem,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
+                                    TextFormField(
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        labelText: "Pupil Post Code",
+                                        hintText: "Pupil Post Code",
+                                        hintStyle: TextStyle(fontSize: 18),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                      ),
+                                      controller: _pupilPostCodeController,
+                                      validator: (input) {
+                                        if (input.isEmpty) {
+                                          return "Pupil Post Code field should not be empty";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
+                                    TextFormField(
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        labelText: "Do Post Code",
+                                        hintText: "Do Post Code",
+                                        hintStyle: TextStyle(fontSize: 18),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                      ),
+                                      controller: _doPostCodeController,
+                                      validator: (input) {
+                                        if (input.isEmpty) {
+                                          return "Do Post Code field should not be empty";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: "Pupil Address",
+                                        hintText: "Pupil Address",
+                                        hintStyle: TextStyle(fontSize: 18),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                      ),
+                                      controller: _pupilAddressController,
+                                      validator: (input) {
+                                        if (input.isEmpty) {
+                                          return "Pupil Address field should not be empty";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: "Memo",
+                                        hintText: "Memo",
+                                        hintStyle: TextStyle(fontSize: 18),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                      ),
+                                      controller: _memoController,
+                                      validator: (input) {
+                                        if (input.isEmpty) {
+                                          return "Memo field should not be empty";
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              40,
+                                    ),
+                                    ListTile(
+                                      title: Text(
+                                        "Status",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      subtitle: new DropdownButton(
+                                        value: _stat,
+                                        items: _dropDownMenuStatusItems,
+                                        onChanged: changedDropDownStatusItem,
+                                      ),
+                                    ),
+                                    Row(children: <Widget>[
+                                      Expanded(
+                                        child: FlatButton(
+                                          onPressed: () {
+                                            // TODO: implement validate function
 
-                          validateForm(
-                              "https://drivinginstructorsdiary.com/app/api/updateLessonApi/" +
-                                  "${widget.bookingID}");
-                        },
-                        child: Text(
-                          "Update Lesson",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        color: Colors.blue,
-                      ),
-                    ),
-                    Expanded(
-                      child: FlatButton(
-                        onPressed: () {
-                          deleteLesson(
-                              "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
-                                  "${widget.bookingID}",
-                              body: {
-                                'instructor_id': snapshot.data,
-                                'date': _dateController.text
-                              });
-                        },
-                        child: Text("Delete Lesson"),
-                        color: Colors.red,
-                      ),
-                    ),
-                    Expanded(
-                        child: FlatButton(
-                            onPressed: () {
-                              Navigator.push(context,
-                                  new MaterialPageRoute(builder: (context) {
-                                return Signature(widget.bookingID);
-                              }));
-                            },
-                            child: Text("ADD Signature")))
-                  ])
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
+                                            validateForm(
+                                                "https://drivinginstructorsdiary.com/app/api/updateLessonApi/" +
+                                                    "${widget.bookingID}");
+                                          },
+                                          child: Text(
+                                            "Update Lesson",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: FlatButton(
+                                          onPressed: () {
+                                            deleteLesson(
+                                                "https://drivinginstructorsdiary.com/app/api/deleteBookingApi/" +
+                                                    "${widget.bookingID}",
+                                                body: {
+                                                  'instructor_id':
+                                                      snapshot.data,
+                                                  'date': _dateController.text
+                                                });
+                                            Navigator.pop(context,
+                                                new MaterialPageRoute(
+                                                    builder: (context) {
+                                              return CalenderPage();
+                                            }));
+                                          },
+                                          child: Text("Delete Lesson"),
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                      Expanded(
+                                          child: FlatButton(
+                                              onPressed: () {
+                                                Navigator.push(context,
+                                                    new MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return Signature(
+                                                      widget.bookingID);
+                                                }));
+                                              },
+                                              child: Text("ADD Signature")))
+                                    ])
+                                  ])));
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
+
+              //-------------------------------------------------------------------------------
+            }));
   }
 
   Future<void> validateForm(String url) async {

@@ -215,9 +215,45 @@ class _EditLessontState extends State<EditLesson> {
                               "${snapshot.data}"),
                       builder: (context, snapViewBooking) {
                         if (snapViewBooking.hasData) {
-                          _dateController.text = snapViewBooking
-                              .data[widget.parseindex]['start_datetime']
-                              .substring(0, 10);
+                          List<String> startList, endList;
+                          if (snapViewBooking.data[widget.parseindex]
+                                      ["start_datetime"] ==
+                                  null ||
+                              snapViewBooking.data[widget.parseindex]
+                                      ["end_datetime"] ==
+                                  null) {
+                            String startDate =
+                                "0000-00-00".replaceAll(new RegExp(r'-'), '/');
+
+                            String endDate =
+                                "0000-00-00".replaceAll(new RegExp(r'-'), '/');
+
+                            print(snapViewBooking.data[widget.parseindex]
+                                ["end_datetime"]);
+
+                            startList = startDate.split('/');
+                            endList = endDate.split('/');
+                          } else {
+                            String startDate = snapViewBooking
+                                .data[widget.parseindex]["start_datetime"]
+                                .replaceAll(new RegExp(r'-'), '/');
+
+                            String endDate = snapViewBooking
+                                .data[widget.parseindex]["end_datetime"]
+                                .replaceAll(new RegExp(r'-'), '/');
+
+                            print(snapViewBooking.data[widget.parseindex]
+                                ["end_datetime"]);
+
+                            startList = startDate.split('/');
+                            endList = endDate.split('/');
+                          }
+
+                          _dateController.text = startList[2].substring(0, 2) +
+                              '/' +
+                              startList[1] +
+                              '/' +
+                              startList[0];
 
                           _startController.text = snapViewBooking
                               .data[widget.parseindex]['start_datetime']
@@ -253,14 +289,31 @@ class _EditLessontState extends State<EditLesson> {
                                   margin: EdgeInsets.only(
                                       right: MediaQuery.of(context).size.width /
                                           20),
-                                  child: Container(
-                                    child: Center(
-                                        child: currentTime.isBefore(
-                                                DateTime.parse(snapViewBooking
-                                                        .data[widget.parseindex]
-                                                    ['end_datetime']))
-                                            ? Text("Up coming")
-                                            : Text("Expired date")),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                80),
+                                        child: Center(
+                                            child: currentTime.isBefore(
+                                                    DateTime.parse(
+                                                        snapViewBooking.data[
+                                                                widget
+                                                                    .parseindex]
+                                                            ['end_datetime']))
+                                                ? Text("Up coming")
+                                                : Text("Expired date")),
+                                      ),
+                                      Text("End Date : " +
+                                          endList[2].substring(0, 2) +
+                                          '/' +
+                                          endList[1] +
+                                          '/' +
+                                          endList[0]),
+                                    ],
                                   ),
                                 )
                               ],

@@ -35,6 +35,7 @@ class _CalenderPageState extends State<CalenderPage>
 
   bool check = false;
   Color cInput;
+
   @override
   Widget build(BuildContext context) {
     void onEventTapped(Map<String, String> event) {
@@ -124,10 +125,18 @@ class _CalenderPageState extends State<CalenderPage>
                       {
                         'type': snap.data[i]['pupil_text'] == null ||
                                 snap.data[i]['pupil_text'] == ""
-                            ? snap.data[i]['type']
+                            ? snap.data[i]['type'] +
+                                "\n" +
+                                snap.data[i]['start_datetime'] +
+                                "\n" +
+                                snap.data[i]['end_datetime']
                             : snap.data[i]['type'] +
                                 "\n" +
-                                snap.data[i]['pupil_text'],
+                                snap.data[i]['pupil_text'] +
+                                "\n" +
+                                snap.data[i]['start_datetime'] +
+                                "\n" +
+                                snap.data[i]['end_datetime'],
                         'reason': snap.data[i]['reason'] == null ||
                                 snap.data[i]['reason'] == ""
                             ? ""

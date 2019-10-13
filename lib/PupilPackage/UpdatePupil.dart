@@ -20,8 +20,9 @@ class _UpdatePupilState extends State<UpdatePupil> {
   TextEditingController _lastController = new TextEditingController();
   TextEditingController _userNameController = new TextEditingController();
   TextEditingController _titleController = new TextEditingController();
-
   TextEditingController _productIDController = new TextEditingController();
+
+  TextEditingController _mobileIDController = new TextEditingController();
   TextEditingController _lessonTypeIDController = new TextEditingController();
   TextEditingController _usualAvalability = new TextEditingController();
   TextEditingController _pickUpAddress = new TextEditingController();
@@ -173,6 +174,26 @@ class _UpdatePupilState extends State<UpdatePupil> {
                         validator: (input) {
                           if (input.isEmpty) {
                             return "Date field should not be empty";
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 40,
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          labelText: "Mobile",
+                          hintText: "Mobile",
+                          hintStyle: TextStyle(fontSize: 18),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15)),
+                        ),
+                        controller: _mobileIDController,
+                        validator: (input) {
+                          if (input.isEmpty) {
+                            return "Product ID field should not be empty";
                           }
                           return null;
                         },
@@ -370,7 +391,8 @@ class _UpdatePupilState extends State<UpdatePupil> {
             "home_address": _homeAddress.text,
             "username": _userNameController.text,
             "firstName": _firstController.text,
-            "lastName": _lastController.text
+            "lastName": _lastController.text,
+            "mobile": _mobileIDController.text
           });
       formState.reset();
     }

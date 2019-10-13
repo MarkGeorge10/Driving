@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart' as URLLauncher;
 
 // ignore: must_be_immutable
 class PupilDetailed extends StatefulWidget {
@@ -11,6 +12,7 @@ class PupilDetailed extends StatefulWidget {
       postalCode,
       houseNumbe,
       phone;
+
   PupilDetailed(
       {this.firstName,
       this.lastName,
@@ -21,6 +23,7 @@ class PupilDetailed extends StatefulWidget {
       this.createdAt,
       this.houseNumbe,
       this.postalCode});
+
   @override
   _PupilDetailedState createState() => _PupilDetailedState();
 }
@@ -88,21 +91,24 @@ class _PupilDetailedState extends State<PupilDetailed> {
                 ),
               ),
               Expanded(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "Phone: ",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 17.0),
-                    ),
-                    Text(
-                      widget.phone == null || widget.phone == ""
-                          ? ""
-                          : widget.phone,
-                      style: TextStyle(fontSize: 15.0),
-                    )
-                  ],
-                ),
+                child: Row(children: <Widget>[
+                  Text(
+                    "Phone: ",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 17.0),
+                  ),
+                  Text(
+                    widget.phone == null || widget.phone == ""
+                        ? ""
+                        : widget.phone,
+                    style: TextStyle(fontSize: 15.0),
+                  ),
+                  IconButton(
+                      icon: Icon(Icons.dialer_sip),
+                      onPressed: () {
+                        URLLauncher.launch("tel:" + widget.phone);
+                      }),
+                ]),
               ),
               Expanded(
                 child: Row(

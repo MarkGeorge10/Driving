@@ -17,8 +17,6 @@ class _LessonsPageState extends State<LessonsPage> {
     return dat;
   }
 
-  List<dynamic> lessonItem;
-
   Color cInput;
 
   Future<List<dynamic>> fetchLessons(String url) async {
@@ -27,8 +25,16 @@ class _LessonsPageState extends State<LessonsPage> {
     try {
       return http.post(url).then((http.Response response) async {
         final String responseBody = response.body;
+        List<dynamic> lessonItem;
         lessonItem = json.decode(responseBody)["bookings"];
         print(lessonItem.length);
+
+        lessonItem.sort((a, b) {
+          var adate = a['start_datetime']; //before -> var adate = a.expiry;
+          var bdate = b['start_datetime']; //before -> var bdate = b.expiry;
+          return adate.compareTo(
+              bdate); //to get the order other way just switch `adate & bdate`
+        });
 
         return lessonItem;
       });

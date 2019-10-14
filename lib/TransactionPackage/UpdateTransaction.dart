@@ -293,7 +293,8 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                                 "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snap.data}"),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                List<DropdownMenuItem<String>> items =
+                                Map<String, String> items = new Map();
+                                List<DropdownMenuItem<String>> itemsDrop =
                                     new List();
 
                                 for (int i = 0; i < snapshot.data.length; i++) {
@@ -301,10 +302,11 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                                   String pupilID = snapshot.data[i]["id"];
                                   // here we are creating the drop down menu items, you can customize the item right here
                                   // but I'll just use a simple text for this
-                                  items.add(new DropdownMenuItem(
-                                      value: pupilID, child: new Text(pupil)));
+                                  items.addAll({'name': pupil, 'ID': pupilID});
+                                  itemsDrop.add(new DropdownMenuItem(
+                                      value: items['ID'],
+                                      child: new Text(items['name'])));
                                 }
-                                pupilItemstr = items[0].value;
                                 void changedDropDownPupilItem(
                                     String selectedCity) {
                                   print(
@@ -322,7 +324,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                                   ),
                                   subtitle: new DropdownButton(
                                     value: pupilItemstr,
-                                    items: items,
+                                    items: itemsDrop,
                                     onChanged: changedDropDownPupilItem,
                                   ),
                                 );

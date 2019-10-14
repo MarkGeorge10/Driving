@@ -120,6 +120,31 @@ class _CalenderPageState extends State<CalenderPage>
                     } else if (snap.data[i]['type'] == 'test') {
                       cInput = const Color(0xFF67F4F7);
                     }*/
+                    List<String> startList, endList;
+                    if (snap.data[i]["start_datetime"] == null ||
+                        snap.data[i]["end_datetime"] == null) {
+                      String startDate =
+                          "0000-00-00".replaceAll(new RegExp(r'-'), '/');
+
+                      String endDate =
+                          "0000-00-00".replaceAll(new RegExp(r'-'), '/');
+
+                      print(snap.data[i]["end_datetime"]);
+
+                      startList = startDate.split('/');
+                      endList = endDate.split('/');
+                    } else {
+                      String startDate = snap.data[i]["start_datetime"]
+                          .replaceAll(new RegExp(r'-'), '/');
+
+                      String endDate = snap.data[i]["end_datetime"]
+                          .replaceAll(new RegExp(r'-'), '/');
+
+                      print(snap.data[i]["end_datetime"]);
+
+                      startList = startDate.split('/');
+                      endList = endDate.split('/');
+                    }
 
                     eventsList.add(
                       {
@@ -127,16 +152,36 @@ class _CalenderPageState extends State<CalenderPage>
                                 snap.data[i]['pupil_text'] == ""
                             ? snap.data[i]['type'] +
                                 "\n" +
-                                snap.data[i]['start_datetime'] +
+                                "Start: " +
+                                startList[2].substring(0, 2) +
+                                '/' +
+                                startList[1] +
+                                '/' +
+                                startList[0] +
                                 "\n" +
-                                snap.data[i]['end_datetime']
+                                "End: " +
+                                endList[2].substring(0, 2) +
+                                '/' +
+                                endList[1] +
+                                '/' +
+                                endList[0]
                             : snap.data[i]['type'] +
                                 "\n" +
                                 snap.data[i]['pupil_text'] +
                                 "\n" +
-                                snap.data[i]['start_datetime'] +
+                                "Start: " +
+                                startList[2].substring(0, 2) +
+                                '/' +
+                                startList[1] +
+                                '/' +
+                                startList[0] +
                                 "\n" +
-                                snap.data[i]['end_datetime'],
+                                "End: " +
+                                endList[2].substring(0, 2) +
+                                '/' +
+                                endList[1] +
+                                '/' +
+                                endList[0],
                         'reason': snap.data[i]['reason'] == null ||
                                 snap.data[i]['reason'] == ""
                             ? ""
@@ -159,6 +204,7 @@ class _CalenderPageState extends State<CalenderPage>
                   floatingActionButton: FloatingActionButton(
                       child: Icon(Icons.add),
                       onPressed: () {
+                        eventsController.close();
                         Navigator.pushNamed(context, '/Choice');
                       }),
                   body: new Center(

@@ -31,7 +31,7 @@ class _LessonsPageState extends State<LessonsPage> {
 
         lessonItem.sort((a, b) {
           var adate = a['start_datetime']; //before -> var adate = a.expiry;
-          var bdate = b['start_datetime']; //before -> var bdate = b.expiry;
+          var bdate = b['end_datetime']; //before -> var bdate = b.expiry;
           return adate.compareTo(
               bdate); //to get the order other way just switch `adate & bdate`
         });

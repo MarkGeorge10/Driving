@@ -327,8 +327,10 @@ class _EditLessontState extends State<EditLesson> {
                                             "https://drivinginstructorsdiary.com/app/api/viewPupilApi/active?instructor_id=${snapshot.data}"),
                                         builder: (context, snapshotName) {
                                           if (snapshotName.hasData) {
+                                            Map<String, String> items =
+                                                new Map();
                                             List<DropdownMenuItem<String>>
-                                                items = new List();
+                                                itemsDrop = new List();
 
                                             for (int i = 0;
                                                 i < snapshotName.data.length;
@@ -342,11 +344,16 @@ class _EditLessontState extends State<EditLesson> {
                                                   snapshotName.data[i]["id"];
                                               // here we are creating the drop down menu items, you can customize the item right here
                                               // but I'll just use a simple text for this
-                                              items.add(new DropdownMenuItem(
-                                                  value: pupilID,
-                                                  child: new Text(pupil)));
+                                              items.addAll({
+                                                'name': pupil,
+                                                'ID': pupilID
+                                              });
+                                              itemsDrop.add(
+                                                  new DropdownMenuItem(
+                                                      value: items['ID'],
+                                                      child: new Text(
+                                                          items['name'])));
                                             }
-                                            pupilItemstr = items[0].value;
 
                                             _stat = _dropDownMenuStatusItems[0]
                                                 .value;
@@ -368,7 +375,7 @@ class _EditLessontState extends State<EditLesson> {
                                               ),
                                               subtitle: new DropdownButton(
                                                 value: pupilItemstr,
-                                                items: items,
+                                                items: itemsDrop,
                                                 onChanged:
                                                     changedDropDownPupilItem,
                                               ),

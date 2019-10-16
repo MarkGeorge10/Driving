@@ -158,13 +158,17 @@ class _CalenderPageState extends State<CalenderPage>
                                 startList[1] +
                                 '/' +
                                 startList[0] +
+                                " " +
+                                startList[2].substring(3, 11) +
                                 "\n" +
                                 "End: " +
                                 endList[2].substring(0, 2) +
                                 '/' +
                                 endList[1] +
                                 '/' +
-                                endList[0]
+                                endList[0] +
+                                " " +
+                                endList[2].substring(3, 11)
                             : snap.data[i]['type'] +
                                 "\n" +
                                 snap.data[i]['pupil_text'] +
@@ -175,13 +179,17 @@ class _CalenderPageState extends State<CalenderPage>
                                 startList[1] +
                                 '/' +
                                 startList[0] +
+                                " " +
+                                startList[2].substring(3, 11) +
                                 "\n" +
                                 "End: " +
                                 endList[2].substring(0, 2) +
                                 '/' +
                                 endList[1] +
                                 '/' +
-                                endList[0],
+                                endList[0] +
+                                " " +
+                                endList[2].substring(3, 11),
                         'reason': snap.data[i]['reason'] == null ||
                                 snap.data[i]['reason'] == ""
                             ? ""
@@ -204,7 +212,7 @@ class _CalenderPageState extends State<CalenderPage>
                   floatingActionButton: FloatingActionButton(
                       child: Icon(Icons.add),
                       onPressed: () {
-                        eventsController.close();
+                        //eventsController.close();
                         Navigator.pushNamed(context, '/Choice');
                       }),
                   body: new Center(

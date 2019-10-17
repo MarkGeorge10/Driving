@@ -216,6 +216,8 @@ class _EditLessontState extends State<EditLesson> {
                       builder: (context, snapViewBooking) {
                         if (snapViewBooking.hasData) {
                           List<String> startList, endList;
+                          String pupilName = snapViewBooking
+                              .data[widget.parseindex]["pupil_text"];
                           if (snapViewBooking.data[widget.parseindex]
                                       ["start_datetime"] ==
                                   null ||
@@ -332,6 +334,8 @@ class _EditLessontState extends State<EditLesson> {
                                             List<DropdownMenuItem<String>>
                                                 itemsDrop = new List();
 
+                                            int dropIndex = 0;
+
                                             for (int i = 0;
                                                 i < snapshotName.data.length;
                                                 i++) {
@@ -340,6 +344,7 @@ class _EditLessontState extends State<EditLesson> {
                                                   " " +
                                                   snapshotName.data[i]
                                                       ["last_name"];
+
                                               String pupilID =
                                                   snapshotName.data[i]["id"];
                                               // here we are creating the drop down menu items, you can customize the item right here
@@ -378,6 +383,19 @@ class _EditLessontState extends State<EditLesson> {
                                                 items: itemsDrop,
                                                 onChanged:
                                                     changedDropDownPupilItem,
+                                              ),
+                                              trailing: Column(
+                                                children: <Widget>[
+                                                  Text(
+                                                    "Currently User Name: ",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  Text(
+                                                    pupilName,
+                                                  ),
+                                                ],
                                               ),
                                             );
                                           }

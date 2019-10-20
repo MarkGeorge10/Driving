@@ -82,13 +82,12 @@ class _CalenderPageState extends State<CalenderPage>
         Navigator.push(context, new MaterialPageRoute(builder: (context) {
           return EditBlocked(event['id'], index);
         }));
-      } else if (event['type'].substring(0, 4) == 'test' ||
-          event['type'].substring(0, 4) == 'Test') {
+      } else if (event['type'].substring(0, 4) == 'test') {
         int index;
         eventsController.close();
         check = true;
         index = eventsList.indexOf(event);
-        print(index);
+        print(event['type'].substring(0, 4));
         Navigator.push(context, new MaterialPageRoute(builder: (context) {
           return EditTest(event['id'], index);
         }));

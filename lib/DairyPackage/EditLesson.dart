@@ -281,42 +281,37 @@ class _EditLessontState extends State<EditLesson> {
                             appBar: AppBar(
                               title: Text("Edit Lesson"),
                               actions: <Widget>[
-                                Card(
-                                  color: currentTime.isBefore(DateTime.parse(
-                                          snapViewBooking
-                                                  .data[widget.parseindex]
-                                              ['end_datetime']))
-                                      ? Colors.white
-                                      : Colors.red,
-                                  margin: EdgeInsets.only(
-                                      right: MediaQuery.of(context).size.width /
-                                          20),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Container(
-                                        margin: EdgeInsets.only(
-                                            top: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                80),
-                                        child: Center(
-                                            child: currentTime.isBefore(
-                                                    DateTime.parse(
-                                                        snapViewBooking.data[
-                                                                widget
-                                                                    .parseindex]
-                                                            ['end_datetime']))
-                                                ? Text("Up coming")
-                                                : Text("Expired date")),
-                                      ),
-                                      Text("End Date : " +
+                                Column(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              80),
+                                      child: Center(
+                                          child: currentTime.isBefore(
+                                                  DateTime.parse(
+                                                      snapViewBooking.data[
+                                                              widget.parseindex]
+                                                          ['end_datetime']))
+                                              ? Text("Up coming")
+                                              : Text(
+                                                  "Expired date",
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                )),
+                                    ),
+                                    Text(
+                                      "End Date : " +
                                           endList[2].substring(0, 2) +
                                           '/' +
                                           endList[1] +
                                           '/' +
-                                          endList[0]),
-                                    ],
-                                  ),
+                                          endList[0],
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ],
                                 )
                               ],
                             ),

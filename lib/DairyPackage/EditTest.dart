@@ -255,8 +255,6 @@ class _EditTestState extends State<EditTest> {
                               : snapViewBooking.data[widget.parseindex]['memo'];
 
                       _stat = snapViewBooking.data[widget.parseindex]['status'];
-                      _duration =
-                          snapViewBooking.data[widget.parseindex]['duration'];
 
                       return Scaffold(
                         appBar: AppBar(
@@ -309,12 +307,11 @@ class _EditTestState extends State<EditTest> {
                                       if (snap.hasData) {
                                         List<DropdownMenuItem<String>> items =
                                             new List();
-
+                                        String pupil;
                                         for (int i = 0;
                                             i < snap.data.length;
                                             i++) {
-                                          String pupil = snap.data[i]
-                                                  ["first_name"] +
+                                          pupil = snap.data[i]["first_name"] +
                                               " " +
                                               snap.data[i]["last_name"];
                                           String pupilID = snap.data[i]["id"];
@@ -344,6 +341,19 @@ class _EditTestState extends State<EditTest> {
                                             value: pupilItemstr,
                                             items: items,
                                             onChanged: changedDropDownPupilItem,
+                                          ),
+                                          trailing: Column(
+                                            children: <Widget>[
+                                              Text(
+                                                "Currently User Name: ",
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              Text(
+                                                pupil,
+                                              ),
+                                            ],
                                           ),
                                         );
                                       }
@@ -413,6 +423,29 @@ class _EditTestState extends State<EditTest> {
                                       value: _duration,
                                       items: _dropDownMenuDurationItems,
                                       onChanged: changedDropDownDurationItem,
+                                    ),
+                                    trailing: Column(
+                                      children: <Widget>[
+                                        Text(
+                                          "Currently Duration: ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(
+                                          snapViewBooking.data[
+                                                              widget.parseindex]
+                                                          ['duration'] ==
+                                                      null ||
+                                                  snapViewBooking.data[
+                                                              widget.parseindex]
+                                                          ['duration'] ==
+                                                      ""
+                                              ? "No added duration "
+                                              : snapViewBooking
+                                                      .data[widget.parseindex]
+                                                  ['duration'],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   SizedBox(

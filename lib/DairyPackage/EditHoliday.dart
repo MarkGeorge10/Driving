@@ -272,6 +272,29 @@ class _EditHolidayState extends State<EditHoliday> {
                                       items: _dropDownMenuDurationItems,
                                       onChanged: changedDropDownDurationItem,
                                     ),
+                                    trailing: Column(
+                                      children: <Widget>[
+                                        Text(
+                                          "Currently Duration: ",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(
+                                          snapViewBooking.data[
+                                                              widget.parseindex]
+                                                          ['duration'] ==
+                                                      null ||
+                                                  snapViewBooking.data[
+                                                              widget.parseindex]
+                                                          ['duration'] ==
+                                                      ""
+                                              ? "No added duration"
+                                              : snapViewBooking
+                                                      .data[widget.parseindex]
+                                                  ['duration'],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(
                                     height:

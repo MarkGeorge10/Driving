@@ -275,8 +275,6 @@ class _EditLessontState extends State<EditLesson> {
                               ? ""
                               : snapViewBooking.data[widget.parseindex]['memo'];
 
-                          _duration = snapViewBooking.data[widget.parseindex]
-                              ['duration'];
                           return Scaffold(
                             appBar: AppBar(
                               title: Text("Edit Lesson"),
@@ -464,6 +462,28 @@ class _EditLessontState extends State<EditLesson> {
                                           items: _dropDownMenuDurationItems,
                                           onChanged:
                                               changedDropDownDurationItem,
+                                        ),
+                                        trailing: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "Currently Duration: ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            Text(
+                                              snapViewBooking.data[widget
+                                                                  .parseindex]
+                                                              ['duration'] ==
+                                                          null ||
+                                                      snapViewBooking.data[widget
+                                                                  .parseindex]
+                                                              ['duration'] ==
+                                                          ""
+                                                  ? "No added duration"
+                                                  : snapViewBooking.data[widget
+                                                      .parseindex]['duration'],
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       SizedBox(

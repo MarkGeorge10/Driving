@@ -211,7 +211,6 @@ class _CalenderPageState extends State<CalenderPage>
                   floatingActionButton: FloatingActionButton(
                       child: Icon(Icons.add),
                       onPressed: () {
-                        //eventsController.close();
                         Navigator.pushNamed(context, '/Choice');
                       }),
                   body: new Center(
